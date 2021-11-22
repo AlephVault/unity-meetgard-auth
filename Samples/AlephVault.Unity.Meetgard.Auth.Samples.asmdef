@@ -1,0 +1,22 @@
+{
+    "name": "AlephVault.Unity.Meetgard.Auth.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c7004f7d2caeb7f488e163a6b45f66cb",
+        "GUID:9fb1e86edc1bf4f46bfc867526bca155",
+        "GUID:aa7fb4e1c71ef8c45b640fda65eb777b",
+        "GUID:8082b538e2f162ab3963c0840852f40e",
+        "GUID:8233aa084c7334eb18c3e9713fa443e5",
+        "GUID:cccffde430f2245d5a04195a4583a9bf",
+        "GUID:f1b75b4322787ca46a1a9af8c89b01de"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

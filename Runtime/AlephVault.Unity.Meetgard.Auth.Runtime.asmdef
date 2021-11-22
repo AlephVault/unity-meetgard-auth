@@ -1,0 +1,19 @@
+{
+    "name": "AlephVault.Unity.Meetgard.Auth.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:aa7fb4e1c71ef8c45b640fda65eb777b",
+        "GUID:c7004f7d2caeb7f488e163a6b45f66cb",
+        "GUID:9fb1e86edc1bf4f46bfc867526bca155",
+        "GUID:8233aa084c7334eb18c3e9713fa443e5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
