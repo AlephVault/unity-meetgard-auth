@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AlephVault.Unity.Support.Utils;
 using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
@@ -60,7 +61,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // The OnWelcome event is triggered. The implementation
                         // must, as fast as it can, invoke a login method in this
                         // event handler.
-                        await (OnWelcome?.Invoke() ?? Task.CompletedTask);
+                        await (OnWelcome?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("Timeout", async (proto) =>
                     {
@@ -69,54 +70,54 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // of the messages immediately. Nevertheless, the event
                         // exists because it is triggered. Expect a disconnection
                         // after this event triggers.
-                        await (OnTimeout?.Invoke() ?? Task.CompletedTask);
+                        await (OnTimeout?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<LoginOK>("OK", async (proto, message) =>
                     {
                         // The OnLoginOK event is triggered.
-                        await (OnLoginOK?.Invoke(message) ?? Task.CompletedTask);
+                        await (OnLoginOK?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<LoginFailed>("Failed", async (proto, message) =>
                     {
                         // The OnLoginFailed event is triggered. Expect a disconnection
                         // after this event triggers.
-                        await (OnLoginFailed?.Invoke(message) ?? Task.CompletedTask);
+                        await (OnLoginFailed?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<Kicked>("Kicked", async (proto, message) =>
                     {
                         // The OnKicked event is triggered. Expect a disconnection
                         // after this event triggers.
-                        await (OnKicked?.Invoke(message) ?? Task.CompletedTask);
+                        await (OnKicked?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("LoggedOut", async (proto) =>
                     {
                         // The OnLoggedOut event is triggered. Expect a disconnection
                         // after this event triggers.
-                        await (OnLoggedOut?.Invoke() ?? Task.CompletedTask);
+                        await (OnLoggedOut?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("AccountAlreadyInUse", async (proto) =>
                     {
                         // The AccountAlreadyInUse event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnAccountAlreadyInUse?.Invoke() ?? Task.CompletedTask);
+                        await (OnAccountAlreadyInUse?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("AlreadyLoggedIn", async (proto) =>
                     {
                         // The AlreadyLoggedIn event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnAlreadyLoggedIn?.Invoke() ?? Task.CompletedTask);
+                        await (OnAlreadyLoggedIn?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("NotLoggedIn", async (proto) =>
                     {
                         // The NotLoggedIn event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnNotLoggedIn?.Invoke() ?? Task.CompletedTask);
+                        await (OnNotLoggedIn?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("Forbidden", async (proto) =>
                     {
                         // The Forbidden event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnForbidden?.Invoke() ?? Task.CompletedTask);
+                        await (OnForbidden?.InvokeAsync() ?? Task.CompletedTask);
                     });
                 }
 
