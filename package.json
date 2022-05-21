@@ -5,7 +5,7 @@
   "description": "An auth system based on Meetgard.",
   "unity": "2020.1",
   "dependencies": {
-    "com.alephvault.unity.meetgard": "0.0.1",
+    "com.alephvault.unity.meetgard": "0.0.2",
     "com.alephvault.unity.support.generic": "0.0.1"
   },
   "author": {

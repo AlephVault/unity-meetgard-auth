@@ -1,8 +1,5 @@
 using AlephVault.Unity.Binary;
-using AlephVault.Unity.Meetgard.Auth.Types;
-using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -17,6 +14,27 @@ namespace AlephVault.Unity.Meetgard.Auth
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
             > {
+                /// <summary>
+                ///   A shortcut function to reject a login.
+                /// </summary>
+                /// <param name="failure">The failure to use</param>
+                /// <returns>An appropriate result tuple</returns>
+                protected Tuple<bool, LoginOK, LoginFailed, AccountIDType> RejectLogin(LoginFailed failure)
+                {
+                    return new Tuple<bool, LoginOK, LoginFailed, AccountIDType>(false, default, failure, default);
+                }
+
+                /// <summary>
+                ///   A shortcut function to accept a login.
+                /// </summary>
+                /// <param name="ok">The success to use (usually trivial)</param>
+                /// <param name="id">The account id</param>
+                /// <returns>An appropriate result tuple</returns>
+                protected Tuple<bool, LoginOK, LoginFailed, AccountIDType> AcceptLogin(LoginOK ok, AccountIDType id)
+                {
+                    return new Tuple<bool, LoginOK, LoginFailed, AccountIDType>(true, ok, default, id);
+                }
+                
                 /// <summary>
                 ///   <para>
                 ///     Adds a login handler for a specific method type.
@@ -60,6 +78,11 @@ namespace AlephVault.Unity.Meetgard.Auth
                                         Debug.LogWarning($"Login was successful but a {typeof(LoginOK).FullName} argument " +
                                                          "is not specified");
                                     }
+                                    if (EqualityComparer<AccountIDType>.Default.Equals(result.Item4, default))
+                                    {
+                                        Debug.LogWarning($"Login was successful but a {typeof(AccountIDType).FullName} argument " +
+                                                         "is not specified");
+                                    }
                                     _ = SendLoginOK(clientId, result.Item2);
                                     await OnLoggedIn(clientId, result.Item4);
                                 }
@@ -74,6 +97,11 @@ namespace AlephVault.Unity.Meetgard.Auth
                                     {
                                         Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginOK).FullName} argument " +
                                                          $"is specified: {result.Item2}");
+                                    }
+                                    if (!EqualityComparer<AccountIDType>.Default.Equals(result.Item4, default))
+                                    {
+                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(AccountIDType).FullName} argument " +
+                                                         $"is specified: {result.Item3}");
                                     }
                                     _ = SendLoginFailed(clientId, result.Item3);
                                     server.Close(clientId);

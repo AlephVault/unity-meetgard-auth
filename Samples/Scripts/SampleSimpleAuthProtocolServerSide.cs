@@ -71,10 +71,11 @@ namespace AlephVault.Unity.Meetgard.Auth
                     {
                         if ((message.Username ?? "").Trim().ToLower() == pair.Key.Trim().ToLower() && message.Password == pair.Value.Password)
                         {
-                            return new Tuple<bool, Nothing, LoginFailed, string>(true, new Nothing(), null, message.Username);
+                            return AcceptLogin(Nothing.Instance, message.Username);
                         }
                     }
-                    return new Tuple<bool, Nothing, LoginFailed, string>(false, null, new LoginFailed(), "");
+
+                    return RejectLogin(new LoginFailed());
                 });
             }
 
