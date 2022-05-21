@@ -16,14 +16,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             public abstract partial class SimpleAuthProtocolServerSide<
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
-            > : ProtocolServerSide<Definition>
-                where LoginOK : ISerializable, new()
-                where LoginFailed : ISerializable, new()
-                where Kicked : IKickMessage<Kicked>, new()
-                where AccountPreviewDataType : ISerializable, new()
-                where AccountDataType : IRecordWithPreview<AccountIDType, AccountPreviewDataType>
-                where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
-            {
+            > {
                 // This section defines public methods to interact with
                 // the session data, and some private methods to add or
                 // remove sessions for a given collection.

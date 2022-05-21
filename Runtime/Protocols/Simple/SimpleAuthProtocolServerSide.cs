@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AlephVault.Unity.Meetgard.Protocols.Simple;
 using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
@@ -32,7 +33,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             public abstract partial class SimpleAuthProtocolServerSide<
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
-            > : ProtocolServerSide<Definition>
+            > : MandatoryHandshakeProtocolServerSide<Definition>
                 where LoginOK : ISerializable, new()
                 where LoginFailed : ISerializable, new()
                 where Kicked : IKickMessage<Kicked>, new()
@@ -41,16 +42,6 @@ namespace AlephVault.Unity.Meetgard.Auth
                 where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
             {
                 /// <summary>
-                ///   The timeout to kick a connection that did
-                ///   not send a login message appropriately.
-                /// </summary>
-                [SerializeField]
-                private float loginTimeout = 5f;
-
-                // This holds the login-pending connections.
-                private Coroutine loginTimeoutCoroutine;
-
-                /// <summary>
                 ///   Typically, in this Start callback function
                 ///   all the Send* shortcuts will be instantiated.
                 ///   This time, also the timeout coroutine is
@@ -58,28 +49,10 @@ namespace AlephVault.Unity.Meetgard.Auth
                 /// </summary>
                 protected override void Initialize()
                 {
+                    base.Initialize();
                     MakeSenders();
-                    loginTimeoutCoroutine = StartCoroutine(LoginTimeoutCoroutine());
                 }
-
-                private void OnDestroy()
-                {
-                    if (loginTimeoutCoroutine != null) StopCoroutine(loginTimeoutCoroutine);
-                    loginTimeoutCoroutine = null;
-                }
-
-                // Every second, it updates the login timeouts.
-                private IEnumerator LoginTimeoutCoroutine()
-                {
-                    while(true)
-                    {
-                        yield return new WaitForSeconds(1f);
-                        // Yes: it triggers an async function on each frame.
-                        // Checks every 1s that there are no pending connections.
-                        UpdatePendingLogin(1f);
-                    }
-                }
-
+                
                 // The only client-side messages that will be set are:
                 // 1. Login:* (as much as needed).
                 // 2. Logout.
@@ -102,18 +75,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 ///   each one for each allowed login method.
                 /// </summary>
                 protected abstract void SetLoginMessageHandlers();
-
-                /// <summary>
-                ///   Sets up the connection to be login pending.
-                ///   Also greets the client.
-                /// </summary>
-                /// <param name="clientId">The just-connected client id</param>
-                public override async Task OnConnected(ulong clientId)
-                {
-                    AddPendingLogin(clientId);
-                    _ = SendWelcome(clientId);
-                }
-
+                
                 /// <summary>
                 ///   Removes the connection from pending login and
                 ///   also removes the session, if any. Only one of
@@ -125,7 +87,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 {
                     await Exclusive(async () =>
                     {
-                        RemovePendingLogin(clientId);
+                        await base.OnDisconnected(clientId, reason);
                         if (SessionExists(clientId))
                         {
                             await OnLoggedOut(clientId, new Kicked().WithNonGracefulDisconnectionErrorReason(reason));

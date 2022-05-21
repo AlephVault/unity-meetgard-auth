@@ -13,14 +13,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             public abstract partial class SimpleAuthProtocolServerSide<
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
-            > : ProtocolServerSide<Definition>
-                where LoginOK : ISerializable, new()
-                where LoginFailed : ISerializable, new()
-                where Kicked : IKickMessage<Kicked>, new()
-                where AccountPreviewDataType : ISerializable, new()
-                where AccountDataType : IRecordWithPreview<AccountIDType, AccountPreviewDataType>
-                where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
-            {
+            > {
                 /// <summary>
                 ///   This is a sender for the Welcome message.
                 /// </summary>
@@ -75,8 +68,6 @@ namespace AlephVault.Unity.Meetgard.Auth
                 // all of the server side message senders.
                 private void MakeSenders()
                 {
-                    SendWelcome = MakeSender("Welcome");
-                    SendTimeout = MakeSender("Timeout");
                     SendLoginOK = MakeSender<LoginOK>("OK");
                     SendLoginFailed = MakeSender<LoginFailed>("Failed");
                     SendKicked = MakeSender<Kicked>("Kicked");

@@ -3,7 +3,9 @@ using AlephVault.Unity.Meetgard.Auth.Types;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
 {
@@ -14,48 +16,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             public abstract partial class SimpleAuthProtocolServerSide<
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
-            > : ProtocolServerSide<Definition>
-                where LoginOK : ISerializable, new()
-                where LoginFailed : ISerializable, new()
-                where Kicked : IKickMessage<Kicked>, new()
-                where AccountPreviewDataType : ISerializable, new()
-                where AccountDataType : IRecordWithPreview<AccountIDType, AccountPreviewDataType>
-                where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
-            {
-                // This is a dict that will be used to track
-                // the timeout of pending login connections.
-                private ConcurrentDictionary<ulong, float> pendingLoginConnections = new ConcurrentDictionary<ulong, float>();
-
-                // Adds a connection id to the pending login
-                // connections.
-                private bool AddPendingLogin(ulong connection)
-                {
-                    return pendingLoginConnections.TryAdd(connection, 0);
-                }
-
-                // Removes a connection id from the pending
-                // login connections.
-                private bool RemovePendingLogin(ulong connection)
-                {
-                    return pendingLoginConnections.TryRemove(connection, out _);
-                }
-
-                // Updates all of the pending connections.
-                private async void UpdatePendingLogin(float delta)
-                {
-                    await Exclusive(async () =>
-                    {
-                        foreach (var pair in pendingLoginConnections.ToArray())
-                        {
-                            pendingLoginConnections.TryUpdate(pair.Key, pair.Value + delta, pair.Value);
-                            if (pendingLoginConnections.TryGetValue(pair.Key, out float value) && value >= loginTimeout)
-                            {
-                                _ = SendTimeout(pair.Key);
-                            }
-                        }
-                    });
-                }
-
+            > {
                 /// <summary>
                 ///   <para>
                 ///     Adds a login handler for a specific method type.
@@ -84,16 +45,36 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // 3. On success: trigger the success.
                         // 4. On failure: trigger the failure.
                         await Exclusive(async () => {
-                            if (RemovePendingLogin(clientId))
+                            if (RemoveHandshakePending(clientId))
                             {
                                 Tuple<bool, LoginOK, LoginFailed, AccountIDType> result = await doLogin(message);
                                 if (result.Item1)
                                 {
+                                    if (!EqualityComparer<LoginFailed>.Default.Equals(result.Item3, default))
+                                    {
+                                        Debug.LogWarning($"Login was successful but a {typeof(LoginFailed).FullName} argument " +
+                                                         $"is specified: {result.Item3}");
+                                    }
+                                    if (EqualityComparer<LoginOK>.Default.Equals(result.Item2, default))
+                                    {
+                                        Debug.LogWarning($"Login was successful but a {typeof(LoginOK).FullName} argument " +
+                                                         "is not specified");
+                                    }
                                     _ = SendLoginOK(clientId, result.Item2);
                                     await OnLoggedIn(clientId, result.Item4);
                                 }
                                 else
                                 {
+                                    if (EqualityComparer<LoginFailed>.Default.Equals(result.Item3, default))
+                                    {
+                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginFailed).FullName} argument " +
+                                                         "is not specified");
+                                    }
+                                    if (!EqualityComparer<LoginOK>.Default.Equals(result.Item2, default))
+                                    {
+                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginOK).FullName} argument " +
+                                                         $"is specified: {result.Item2}");
+                                    }
                                     _ = SendLoginFailed(clientId, result.Item3);
                                     server.Close(clientId);
                                 }

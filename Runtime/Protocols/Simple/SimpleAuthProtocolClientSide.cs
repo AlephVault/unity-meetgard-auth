@@ -34,6 +34,12 @@ namespace AlephVault.Unity.Meetgard.Auth
             {
                 // This is a sender for the Logout message.
                 private Func<Task> SendLogout;
+                
+                /// <summary>
+                ///   Tells whether this client is currently logged
+                ///   in, somehow.
+                /// </summary>
+                public bool LoggedIn { get; private set; }
 
                 /// <summary>
                 ///   Typically, in this Start callback function
@@ -75,6 +81,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                     AddIncomingMessageHandler<LoginOK>("OK", async (proto, message) =>
                     {
                         // The OnLoginOK event is triggered.
+                        LoggedIn = true;
                         await (OnLoginOK?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<LoginFailed>("Failed", async (proto, message) =>
@@ -87,12 +94,14 @@ namespace AlephVault.Unity.Meetgard.Auth
                     {
                         // The OnKicked event is triggered. Expect a disconnection
                         // after this event triggers.
+                        LoggedIn = false;
                         await (OnKicked?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("LoggedOut", async (proto) =>
                     {
                         // The OnLoggedOut event is triggered. Expect a disconnection
                         // after this event triggers.
+                        LoggedIn = false;
                         await (OnLoggedOut?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("AccountAlreadyInUse", async (proto) =>
@@ -196,7 +205,9 @@ namespace AlephVault.Unity.Meetgard.Auth
                 /// </summary>
                 public async Task Logout()
                 {
-                    _ = SendLogout();
+                    // Notes: SendLogout must be awaited for. Otherwise,
+                    // the logout message is NOT sent.
+                    await SendLogout();
                     client.Close();
                 }
             }

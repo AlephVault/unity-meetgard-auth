@@ -18,7 +18,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             /// <typeparam name="LoginOK">The message content type for when the login is accepted</typeparam>
             /// <typeparam name="LoginFailed">The message content type for when the login is rejected</typeparam>
             /// <typeparam name="Kicked">The message content type for when the user is kicked (e.g. including reason)</typeparam>
-            public abstract class SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked> : ProtocolDefinition
+            public abstract class SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked> : MandatoryHandshakeProtocolDefinition
                 where LoginOK : ISerializable, new()
                 where LoginFailed : ISerializable, new()
                 where Kicked : IKickMessage<Kicked>, new()
@@ -29,8 +29,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                     // so multiple realms can be implemented, each with
                     // a different type.
                     DefineLoginMessages();
-                    DefineServerMessage("Welcome");
-                    DefineServerMessage("Timeout");
+                    base.DefineMessages();
                     DefineServerMessage<LoginOK>("OK");
                     DefineServerMessage<LoginFailed>("Failed");
                     DefineServerMessage<Kicked>("Kicked");

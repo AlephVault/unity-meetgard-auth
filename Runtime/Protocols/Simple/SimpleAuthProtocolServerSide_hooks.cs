@@ -14,14 +14,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             public abstract partial class SimpleAuthProtocolServerSide<
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
-            > : ProtocolServerSide<Definition>
-                where LoginOK : ISerializable, new()
-                where LoginFailed : ISerializable, new()
-                where Kicked : IKickMessage<Kicked>, new()
-                where AccountPreviewDataType : ISerializable, new()
-                where AccountDataType : IRecordWithPreview<AccountIDType, AccountPreviewDataType>
-                where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
-            {
+            > {
                 /// <summary>
                 ///   Tells when an account was not found by its ID.
                 /// </summary>
