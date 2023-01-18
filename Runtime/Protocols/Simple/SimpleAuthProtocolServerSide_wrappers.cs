@@ -55,7 +55,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 /// <param name="allowed">The callback to check whether the client is allowed to perform the action</param>
                 /// <param name="handler">The message handler</param>
                 /// <returns>The wrapped message handler</returns>
-                public Func<ProtocolServerSide<TargetDefinitionType>, ulong, Task> LoginRequired<TargetDefinitionType, TargetProtocolType>(Func<ulong, Task<bool>> allowed, Func<ProtocolServerSide<TargetDefinitionType>, ulong, Task> handler)
+                public Func<ProtocolServerSide<TargetDefinitionType>, ulong, Task> LoginRequired<TargetDefinitionType>(Func<ulong, Task<bool>> allowed, Func<ProtocolServerSide<TargetDefinitionType>, ulong, Task> handler)
                     where TargetDefinitionType : ProtocolDefinition, new()
                 {
                     Func<ulong, Task<bool>> isAllowed = WrapAllowedCheck(allowed);
