@@ -15,16 +15,6 @@ namespace AlephVault.Unity.Meetgard.Auth
                 AccountIDType, AccountPreviewDataType, AccountDataType
             > {
                 /// <summary>
-                ///   This is a sender for the Welcome message.
-                /// </summary>
-                private Func<ulong, Task> SendWelcome;
-
-                /// <summary>
-                ///   This is a sender for the Timeout message.
-                /// </summary>
-                private Func<ulong, Task> SendTimeout;
-
-                /// <summary>
                 ///   This is a sender for the LoginOK message.
                 /// </summary>
                 private Func<ulong, LoginOK, Task> SendLoginOK;
