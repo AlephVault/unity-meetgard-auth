@@ -1,0 +1,19 @@
+{
+    "name": "AlephVault.Unity.Meetgard.Auth.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f90bbbab12f82970aadf435cc687514a",
+        "GUID:0c7703a0282a77d4ea0e67ece4526024"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

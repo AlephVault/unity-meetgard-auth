@@ -1,0 +1,17 @@
+using AlephVault.Unity.Binary;
+using AlephVault.Unity.Meetgard.Auth.Protocols.Simple;
+
+namespace Protocols {
+    public class #SCRIPTNAME# : SimpleAuthProtocolDefinition<#LOGINOK_TYPE#, #LOGINFAILED_TYPE#, #KICKED_TYPE#>
+    {
+        /// <summary>
+        ///   Defines the login messages.
+        /// </summary>
+        protected abstract void DefineLoginMessages()
+        {
+            // Define many alternative login messages. Typically,
+            // only one will be needed, however.
+            DefineLoginMessage<#LOGIN_TYPE#>("Default");
+        }
+    }
+}
