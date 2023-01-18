@@ -45,16 +45,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                         }
                     };
                 }
-
-                // In order to require logout, the client must be login pending.
-                // This means that the client must be in the concurrent set of
-                // pending connections.
-                private bool IsLoginPending(ulong clientId)
-                {
-                    // TODO implement.
-                    return true;
-                }
-
+                
                 /// <summary>
                 ///   Wraps a handler to require the client to be logged in.
                 ///   This is related to a custom target definition type and
@@ -187,7 +178,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 {
                     return async (proto, clientId) =>
                     {
-                        if (IsLoginPending(clientId))
+                        if (IsConnectionHandshakePending(clientId))
                         {
                             await handler(proto, clientId);
                         }
@@ -213,7 +204,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 {
                     return async (proto, clientId, message) =>
                     {
-                        if (IsLoginPending(clientId))
+                        if (IsConnectionHandshakePending(clientId))
                         {
                             await handler(proto, clientId, message);
                         }
