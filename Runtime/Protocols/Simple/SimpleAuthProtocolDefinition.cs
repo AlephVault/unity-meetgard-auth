@@ -54,7 +54,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 /// <summary>
                 ///   Defines a login message, from client to server.
                 /// </summary>
-                /// <typeparam name="T">The type of the login meesage</typeparam>
+                /// <typeparam name="T">The type of the login message</typeparam>
                 /// <param name="method">The name of the method to use</param>
                 protected void DefineLoginMessage<T>(string method) where T : ISerializable, new()
                 {
