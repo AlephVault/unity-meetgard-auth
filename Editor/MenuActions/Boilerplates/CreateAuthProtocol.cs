@@ -171,7 +171,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     string accountIdType, string accountPreviewDataType, string accountDataType
                 ) {
                     string directory = "Packages/com.alephvault.unity.meetgard.auth/" +
-                                       "Editor/MenuActions/Boilerplates/Templates";
+                                       "Editor/MenuActions/Boilerplates/LoginTemplates";
 
                     // The protocol templates.
                     TextAsset pcsText = AssetDatabase.LoadAssetAtPath<TextAsset>(
