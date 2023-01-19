@@ -42,10 +42,9 @@ namespace AlephVault.Unity.Meetgard.Auth
                 public bool LoggedIn { get; private set; }
 
                 /// <summary>
-                ///   Typically, in this Start callback function
-                ///   all the Send* shortcuts will be instantiated.
-                ///   Override this method with super-call to
-                ///   instantiate all the needed Send* shortcuts.
+                ///   Defines all the needed messages. One Logout
+                ///   message and then invokes MakeLoginRequestSenders.
+                ///   Override that method instead of this one.
                 /// </summary>
                 protected override void Initialize()
                 {
@@ -135,7 +134,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 ///   correspond to a registered message with the method
                 ///   <see cref="SimpleAuthProtocolDefinition{LoginOK, LoginFailed, Kicked}.DefineLoginMessage{T}(string)"/>.
                 /// </summary>
-                /// <typeparam name="T">The type of the login meesage</typeparam>
+                /// <typeparam name="T">The type of the login message</typeparam>
                 /// <param name="method">The name of the method to use</param>
                 /// <returns>The sender for that login message</returns>
                 protected Func<T, Task> MakeLoginRequestSender<T>(string method) where T : ISerializable, new()
