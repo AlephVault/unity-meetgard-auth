@@ -1,16 +1,27 @@
 using System;
 using System.Threading.Tasks;
-using AlephVault.Unity.Binary;
+using AlephVault.Unity.Meetgard.Auth.Types;
 using AlephVault.Unity.Meetgard.Auth.Protocols.Simple;
 using Protocols;
+using Protocols.Messages;
+using Server.Authoring.Types;
 
 namespace Server.Authoring.Behaviours.Protocols
 {
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+    using AlephVault.Unity.Meetgard.Types;
+
     public class #SCRIPTNAME# : SimpleAuthProtocolServerSide<
-        #PROTOCOLDEFINITION#, #LOGINOK_TYPE#, #LOGINFAILED_TYPE#, #KICKED_TYPE#,
+        #PROTOCOLDEFINITION#, Nothing, #LOGINFAILED_TYPE#, #KICKED_TYPE#,
         #ACCOUNTID_TYPE#, #ACCOUNTPREVIEWDATA_TYPE#, #ACCOUNTDATA_TYPE#
     >
     {
+        // Please note: The Nothing type is used when no data is needed.
+        // This means that by default there is no need for any content
+        // in the successful login response. See the #PROTOCOLDEFINITION#
+        // type for more details.
+    
         /// <summary>
         ///   Makes the handlers for the login messages.
         /// </summary>
@@ -26,7 +37,9 @@ namespace Server.Authoring.Behaviours.Protocols
                 //
                 // Given the login details, they are either valid or
                 // invalid. If the login is valid, then it must return:
-                // - A successful reason, of type: #LOGINOK_TYPE#.
+                // - A successful response. By default, the successful
+                //   response is defined of type Nothing, so the value
+                //   will be Nothing.Instance.
                 // - The account id, of type: #ACCOUNTID_TYPE#.
                 // 
                 // return AcceptLogin(successfulReason, accountId);
@@ -35,13 +48,14 @@ namespace Server.Authoring.Behaviours.Protocols
                 // reason must be generated, of type: #LOGINFAILED_TYPE#.
                 //
                 // return RejectLogin(unsuccessfulReason);
+                throw new NotImplementedException();
             });
         }
         
         /// <summary>
         ///   Retrieves the "full" account data, to store it in the session.
         /// </summary>
-        protected override Task<#ACCOUNTDATA_TYPE#> FindAccount(#ACCOUNTID_TYPE# id)
+        protected override async Task<#ACCOUNTDATA_TYPE#> FindAccount(#ACCOUNTID_TYPE# id)
         {
             // This doesn't mean that the returned data is actually the FULL
             // data of an account, but at least some sort of "long" representation
@@ -70,7 +84,7 @@ namespace Server.Authoring.Behaviours.Protocols
         /// <summary>
         ///   Handles an error that occurred in the session management.
         /// </summary>
-        protected override Task OnSessionError(ulong clientId, SessionStage stage, Exception error)
+        protected override async Task OnSessionError(ulong clientId, SessionStage stage, System.Exception error)
         {
             // The stage value can be:
             // - SessionStage.AccountLoad: The account data was being loaded.

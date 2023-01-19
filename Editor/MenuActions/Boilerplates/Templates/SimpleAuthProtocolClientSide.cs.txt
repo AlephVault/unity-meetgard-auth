@@ -1,20 +1,29 @@
 using System;
 using System.Threading.Tasks;
-using AlephVault.Unity.Binary;
 using AlephVault.Unity.Meetgard.Auth.Protocols.Simple;
 using Protocols;
+using Protocols.Messages;
 
 namespace Client.Authoring.Behaviours.Protocols
 {
-    public class #SCRIPTNAME# : SimpleAuthProtocolClientSide<#PROTOCOLDEFINITION#, #LOGINOK_TYPE#, #LOGINFAILED_TYPE#, #KICKED_TYPE#>
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+    using AlephVault.Unity.Meetgard.Types;
+
+    public class #SCRIPTNAME# : SimpleAuthProtocolClientSide<#PROTOCOLDEFINITION#, Nothing, #LOGINFAILED_TYPE#, #KICKED_TYPE#>
     {
+        // Please note: The Nothing type is used when no data is needed.
+        // This means that by default there is no need for any content
+        // in the successful login response. See the #PROTOCOLDEFINITION#
+        // type for more details.
+
         // A default login sender.
         private Func<#LOGIN_TYPE#, Task> DefaultLoginSender;
 
         /// <summary>
         ///   Makes the senders for the login messages.
         /// </summary>
-        protected abstract void MakeLoginRequestSenders()
+        protected override void MakeLoginRequestSenders()
         {
             // For each defined login message in the protocol definition,
             // the sender must be created in this method. Since one login
