@@ -19,11 +19,9 @@ namespace AlephVault.Unity.Meetgard.Auth
             ///   This is the server-side implementation of a simple
             ///   authentication protocol. The same server doing the
             ///   authentication, is the server mounting the game.
-            ///   This client is the counterpart and connects to a
-            ///   single server (it may be used in more complex
-            ///   login interactions, though). The server side also
-            ///   offers some helpers to wrap handlers to make them
-            ///   require login or logout on clients.
+            ///   This server side also offers some helpers to wrap
+            ///   handlers to make them require login or logout on
+            ///   clients.
             /// </summary>
             /// <typeparam name="Definition">A subclass of <see cref="SimpleAuthProtocolDefinition{LoginOK, LoginFailed, Kicked}"/></typeparam>
             /// <typeparam name="LoginOK">The type of the "successful login" message</typeparam>

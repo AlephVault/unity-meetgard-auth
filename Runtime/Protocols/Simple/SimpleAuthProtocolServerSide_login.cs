@@ -40,8 +40,8 @@ namespace AlephVault.Unity.Meetgard.Auth
                 ///     Adds a login handler for a specific method type.
                 ///     The login handler returns a tuple with 3 elements:
                 ///     whether the login was successful, the login success
-                ///     message (or null if it was successful) and the login
-                ///     failure message (or null if it was NOT successful).
+                ///     message (or null if it was unsuccessful) and the
+                ///     login failure message (or null if it was successful).
                 ///     As a fourth parameter, the account id will be given
                 ///     (or its default value) when the login is successful.
                 ///   </para>
@@ -52,7 +52,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 ///     which will be implemented in a different component.
                 ///   </para>
                 /// </summary>
-                /// <typeparam name="T">The type of the login meesage</typeparam>
+                /// <typeparam name="T">The type of the login message</typeparam>
                 /// <param name="method">The name of the method to use</param>
                 /// <param name="doLogin">The handler to use to perform the login</param>
                 protected void AddLoginMessageHandler<T>(string method, Func<T, Task<Tuple<bool, LoginOK, LoginFailed, AccountIDType>>> doLogin) where T : ISerializable, new()

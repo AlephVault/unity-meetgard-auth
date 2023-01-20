@@ -10,6 +10,16 @@ namespace AlephVault.Unity.Meetgard.Auth
     {
         namespace Simple
         {
+            /// <summary>
+            ///   This is the client side implementation of
+            ///   a simple register protocol. The same server
+            ///   allowing the register, is the one running
+            ///   the game. This is optional (many games do
+            ///   their register process in an external site).
+            /// </summary>
+            /// <typeparam name="Definition">A subclass of <see cref="SimpleRegisterProtocolDefinition{RegisterOK,RegisterFailed}"/></typeparam>
+            /// <typeparam name="RegisterOK">The type of "successful register" message</typeparam>
+            /// <typeparam name="RegisterFailed">The type of "failed register" message</typeparam>
             public abstract class SimpleRegisterProtocolClientSide<Definition, RegisterOK, RegisterFailed> : ProtocolClientSide<Definition>
                 where RegisterOK : ISerializable, new()
                 where RegisterFailed : ISerializable, new()
