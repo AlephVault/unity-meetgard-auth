@@ -13,14 +13,14 @@ namespace AlephVault.Unity.Meetgard
     {
         namespace Boilerplates
         {
-            public static class CreateProtocol
+            public static class CreateAuthProtocol
             {
                 /// <summary>
                 ///   Utility window used to create protocol files. It takes
                 ///   a name only, and the three files (definition, server and
                 ///   client sides) will be generated out of it.
                 /// </summary>
-                public class CreateProtocolWindow : EditorWindow
+                public class CreateAuthProtocolWindow : EditorWindow
                 {
                     private Regex nameCriterion = new Regex("^[A-Z][A-Za-z0-9_]*$");
                     private Regex existingNameCriterion = new Regex("^[A-Za-z][A-Za-z0-9_]*$");
@@ -269,7 +269,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                 [MenuItem("Assets/Create/Meetgard.Auth/Boilerplates/Create Simple Auth Protocol", false, 12)]
                 public static void ExecuteBoilerplate()
                 {
-                    CreateProtocolWindow window = ScriptableObject.CreateInstance<CreateProtocolWindow>();
+                    CreateAuthProtocolWindow window = ScriptableObject.CreateInstance<CreateAuthProtocolWindow>();
                     Vector2 size = new Vector2(750, 394);
                     window.position = new Rect(new Vector2(110, 250), size);
                     window.minSize = size;
