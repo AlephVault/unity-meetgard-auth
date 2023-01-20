@@ -24,9 +24,9 @@ namespace Server.Authoring.Behaviours.Protocols
             //
             // Typically, the handler to add would be for non-logged users.
             //
-            // Do not attach this protocol to the same protocol you attach
-            // an Auth protocol, since it will cause this protocol to close
-            // all the clients because of timeout.         
+            // If this component is attached to the same object that has an
+            // authentication protocol, you might want to wrap this handler
+            // using .LogoutRequired from that component.
             AddRegisterMessageHandler<#REGISTER_TYPE#>("Default", async (register) => {
                 // This method requires a totally custom implementation
                 // from the user.
