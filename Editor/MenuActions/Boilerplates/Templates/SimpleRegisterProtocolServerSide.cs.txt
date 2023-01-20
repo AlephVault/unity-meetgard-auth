@@ -23,12 +23,10 @@ namespace Server.Authoring.Behaviours.Protocols
             // is being created in this method.
             //
             // Typically, the handler to add would be for non-logged users.
-            // If this behaviour is attached to the same server the auth
-            // protocol is also attached to, then this handler should be
-            // wrapped with a LogoutRequired from that auth protocol. This
-            // is, however, just a suggestion and your game might actually
-            // not want to enforce that constraint. But, anyway, it is an
-            // allowed and recommended one.            
+            //
+            // Do not attach this protocol to the same protocol you attach
+            // an Auth protocol, since it will cause this protocol to close
+            // all the clients because of timeout.         
             AddRegisterMessageHandler<#REGISTER_TYPE#>("Default", async (register) => {
                 // This method requires a totally custom implementation
                 // from the user.
