@@ -17,5 +17,11 @@ namespace Protocols.Messages
         {
             serializer.Serialize(ref Reason);
         }
+        
+        public #SCRIPTNAME# WithNotImplementedReason()
+        {
+            Reason = "Login is not yet implemented";
+            return this;
+        }
     }
 }

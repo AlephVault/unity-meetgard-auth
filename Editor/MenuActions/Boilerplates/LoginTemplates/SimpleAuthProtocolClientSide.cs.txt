@@ -18,7 +18,7 @@ namespace Client.Authoring.Behaviours.Protocols
         // type for more details.
 
         // A default login sender.
-        private Func<#LOGIN_TYPE#, Task> DefaultLoginSender;
+        public Func<#LOGIN_TYPE#, Task> DefaultLoginSender { get; private set; }
 
         /// <summary>
         ///   Makes the senders for the login messages.
@@ -44,7 +44,7 @@ namespace Client.Authoring.Behaviours.Protocols
          *   disconnect it immediately and also render a message, since the server
          *   did not receive, in certain threshold time, a login message.
          *
-         * - OnLoginOk = async (ok) => { ... }; for when this client received a
+         * - OnLoginOK = async (ok) => { ... }; for when this client received a
          *   message telling the login was successful. The client should expect
          *   more messages from the server (e.g. account being set up and things
          *   needing a render in the client side).

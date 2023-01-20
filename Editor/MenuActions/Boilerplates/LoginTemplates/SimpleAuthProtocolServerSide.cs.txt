@@ -48,7 +48,8 @@ namespace Server.Authoring.Behaviours.Protocols
                 // reason must be generated, of type: #LOGINFAILED_TYPE#.
                 //
                 // return RejectLogin(unsuccessfulReason);
-                throw new NotImplementedException();
+                
+                return RejectLogin(new #LOGINFAILED_TYPE#().WithNotImplementedReason());
             });
         }
         
