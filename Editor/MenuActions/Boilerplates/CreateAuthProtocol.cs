@@ -26,7 +26,7 @@ namespace AlephVault.Unity.Meetgard
                     private Regex existingNameCriterion = new Regex("^[A-Za-z][A-Za-z0-9_]*$");
 
                     // The base name to use.
-                    private string baseName = "MyCustom";
+                    private string baseName = "MySimpleAuth";
                     
                     // The name of the Login message type.
                     private string loginType = "Login";

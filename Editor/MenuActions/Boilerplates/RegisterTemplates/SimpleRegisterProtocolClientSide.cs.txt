@@ -23,7 +23,7 @@ namespace Client.Authoring.Behaviours.Protocols
         /// <summary>
         ///   Makes the senders for the register messages.
         /// </summary>
-        protected override void MakeLoginRequestSenders()
+        protected override void MakeRegisterRequestSenders()
         {
             // For each defined register message in the protocol definition,
             // the sender must be created in this method. Since one register

@@ -23,7 +23,7 @@ namespace Protocols {
         {
             // Define many alternative register messages. Typically,
             // only one will be needed, however.
-            DefineLoginMessage<Messages.#REGISTER_TYPE#>("Default");
+            DefineRegisterMessage<Messages.#REGISTER_TYPE#>("Default");
         }
     }
 }
