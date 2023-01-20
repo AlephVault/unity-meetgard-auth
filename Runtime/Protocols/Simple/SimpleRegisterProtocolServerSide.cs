@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AlephVault.Unity.Binary;
-using AlephVault.Unity.Meetgard.Protocols.Simple;
+using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
 using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
@@ -23,7 +23,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             /// <typeparam name="RegisterFailed"></typeparam>
             public abstract class SimpleRegisterProtocolServerSide<
                 Definition, RegisterOK, RegisterFailed
-            > : MandatoryHandshakeProtocolServerSide<Definition>
+            > : ProtocolServerSide<Definition>
                 where RegisterOK : ISerializable, new()
                 where RegisterFailed : ISerializable, new()
                 where Definition : SimpleRegisterProtocolDefinition<RegisterOK, RegisterFailed>, new()
@@ -31,6 +31,17 @@ namespace AlephVault.Unity.Meetgard.Auth
                 private Func<ulong, RegisterOK, Task> SendRegisterOK;
                 private Func<ulong, RegisterFailed, Task> SendRegisterFailed;
                 
+                /// <summary>
+                ///   The related handshake handler.
+                /// </summary>
+                public MandatoryHandshakeProtocolServerSide Handshake { get; private set; }
+                
+                protected override void Setup()
+                {
+                    base.Setup();
+                    Handshake = GetComponent<MandatoryHandshakeProtocolServerSide>();
+                }
+
                 /// <summary>
                 ///   Typically, in this Start callback function
                 ///   all the Send* shortcuts will be instantiated.
@@ -106,7 +117,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // 3. On success: trigger the success.
                         // 4. On failure: trigger the failure.
                         await Exclusive(async () => {
-                            if (RemoveHandshakePending(clientId))
+                            if (Handshake.RemoveHandshakePending(clientId))
                             {
                                 Tuple<bool, RegisterOK, RegisterFailed> result = await doRegister(message);
                                 if (result.Item1)

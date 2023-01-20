@@ -63,7 +63,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // 3. On success: trigger the success.
                         // 4. On failure: trigger the failure.
                         await Exclusive(async () => {
-                            if (RemoveHandshakePending(clientId))
+                            if (Handshake.RemoveHandshakePending(clientId))
                             {
                                 Tuple<bool, LoginOK, LoginFailed, AccountIDType> result = await doLogin(message);
                                 if (result.Item1)

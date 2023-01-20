@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 156981781}
   - component: {fileID: 156981786}
   - component: {fileID: 156981785}
+  - component: {fileID: 156981788}
   - component: {fileID: 156981784}
   - component: {fileID: 156981783}
   - component: {fileID: 156981782}
@@ -197,7 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 747bea42f8c8db940ab2f717f5da9075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loginTimeout: 5
   accounts:
     m_keys:
     - Pedro
@@ -246,8 +246,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idleSleepTime: 0.01
   maxMessageSize: 1024
+  writeTimeout: 15
   DontDestroy: 0
-  QueueManager: {fileID: 0}
+  secure: 0
+  sslProtocols: 240
+  certificatePath: 
+  privateKeyPassphraseEnvVar: 
 --- !u!114 &156981787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +264,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5722263aefb1749a32e756a4a4979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &156981788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156981780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93225baa57d4e7cbcdb9d7a9967b887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handshakeTimeout: 5
 --- !u!1 &550212966
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,6 +288,7 @@ GameObject:
   - component: {fileID: 550212972}
   - component: {fileID: 550212971}
   - component: {fileID: 550212970}
+  - component: {fileID: 550212974}
   - component: {fileID: 550212969}
   - component: {fileID: 550212968}
   - component: {fileID: 550212967}
@@ -354,7 +372,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idleSleepTime: 0.01
   maxMessageSize: 1024
+  writeTimeout: 15
   DontDestroy: 0
+  secure: 0
+  trustServerCertificate: 0
+  sslProtocols: 240
+  checkCertificateRevocation: 1
 --- !u!4 &550212972
 Transform:
   m_ObjectHideFlags: 0
@@ -379,6 +402,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c5722263aefb1749a32e756a4a4979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &550212974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550212966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fa4245cdde94654be4a7bb13b7871cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &615886820
@@ -475,6 +510,7 @@ GameObject:
   - component: {fileID: 766850266}
   - component: {fileID: 766850265}
   - component: {fileID: 766850264}
+  - component: {fileID: 766850268}
   - component: {fileID: 766850263}
   - component: {fileID: 766850262}
   - component: {fileID: 766850261}
@@ -558,7 +594,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idleSleepTime: 0.01
   maxMessageSize: 1024
+  writeTimeout: 15
   DontDestroy: 0
+  secure: 0
+  trustServerCertificate: 0
+  sslProtocols: 240
+  checkCertificateRevocation: 1
 --- !u!4 &766850266
 Transform:
   m_ObjectHideFlags: 0
@@ -585,6 +626,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5722263aefb1749a32e756a4a4979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &766850268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766850260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fa4245cdde94654be4a7bb13b7871cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1378521998
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,6 +649,7 @@ GameObject:
   - component: {fileID: 1378522004}
   - component: {fileID: 1378522003}
   - component: {fileID: 1378522002}
+  - component: {fileID: 1378522006}
   - component: {fileID: 1378522001}
   - component: {fileID: 1378522000}
   - component: {fileID: 1378521999}
@@ -679,7 +733,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idleSleepTime: 0.01
   maxMessageSize: 1024
+  writeTimeout: 15
   DontDestroy: 0
+  secure: 0
+  trustServerCertificate: 0
+  sslProtocols: 240
+  checkCertificateRevocation: 1
 --- !u!4 &1378522004
 Transform:
   m_ObjectHideFlags: 0
@@ -706,6 +765,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5722263aefb1749a32e756a4a4979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1378522006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378521998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fa4245cdde94654be4a7bb13b7871cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1789341496
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,6 +788,7 @@ GameObject:
   - component: {fileID: 1789341502}
   - component: {fileID: 1789341501}
   - component: {fileID: 1789341500}
+  - component: {fileID: 1789341504}
   - component: {fileID: 1789341499}
   - component: {fileID: 1789341498}
   - component: {fileID: 1789341497}
@@ -800,7 +872,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idleSleepTime: 0.01
   maxMessageSize: 1024
+  writeTimeout: 15
   DontDestroy: 0
+  secure: 0
+  trustServerCertificate: 0
+  sslProtocols: 240
+  checkCertificateRevocation: 1
 --- !u!4 &1789341502
 Transform:
   m_ObjectHideFlags: 0
@@ -825,5 +902,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c5722263aefb1749a32e756a4a4979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1789341504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789341496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fa4245cdde94654be4a7bb13b7871cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

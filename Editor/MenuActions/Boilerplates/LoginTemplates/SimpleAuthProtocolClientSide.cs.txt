@@ -35,14 +35,14 @@ namespace Client.Authoring.Behaviours.Protocols
         /**
          * This class has the following events that can be listened for. They are:
          *
-         * - OnWelcome = async () => { ... }; for when this client received from
-         *   the server the first message. This client should, as immediately as
+         * - Handshake.OnWelcome = async () => { ... }; for when this client received
+         *   from the server the first message. This client should, as immediately as
          *   possible, send the login message with some pre-fetched data.
          *
-         * - OnTimeout = async () => { ... }; for when this client received from
-         *   the server a timeout message. This client should know the server will
-         *   disconnect it immediately and also render a message, since the server
-         *   did not receive, in certain threshold time, a login message.
+         * - Handshake.OnTimeout = async () => { ... }; for when this client received
+         *   from the server a timeout message. This client should know the server will
+         *   disconnect it immediately and also render a message, since the server did
+         *   not receive, in certain threshold time, a login message.
          *
          * - OnLoginOK = async (ok) => { ... }; for when this client received a
          *   message telling the login was successful. The client should expect

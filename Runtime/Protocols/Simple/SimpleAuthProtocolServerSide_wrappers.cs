@@ -178,7 +178,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 {
                     return async (proto, clientId) =>
                     {
-                        if (IsConnectionHandshakePending(clientId))
+                        if (Handshake.IsConnectionHandshakePending(clientId))
                         {
                             await handler(proto, clientId);
                         }
@@ -204,7 +204,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 {
                     return async (proto, clientId, message) =>
                     {
-                        if (IsConnectionHandshakePending(clientId))
+                        if (Handshake.IsConnectionHandshakePending(clientId))
                         {
                             await handler(proto, clientId, message);
                         }

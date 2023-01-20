@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AlephVault.Unity.Binary;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Client;
 using AlephVault.Unity.Support.Utils;
+using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
 {
@@ -20,11 +21,23 @@ namespace AlephVault.Unity.Meetgard.Auth
             /// <typeparam name="Definition">A subclass of <see cref="SimpleRegisterProtocolDefinition{RegisterOK,RegisterFailed}"/></typeparam>
             /// <typeparam name="RegisterOK">The type of "successful register" message</typeparam>
             /// <typeparam name="RegisterFailed">The type of "failed register" message</typeparam>
+            [RequireComponent(typeof(MandatoryHandshakeProtocolClientSide))]
             public abstract class SimpleRegisterProtocolClientSide<Definition, RegisterOK, RegisterFailed> : ProtocolClientSide<Definition>
                 where RegisterOK : ISerializable, new()
                 where RegisterFailed : ISerializable, new()
                 where Definition : SimpleRegisterProtocolDefinition<RegisterOK, RegisterFailed>, new()
             {
+                /// <summary>
+                ///   The related handshake handler.
+                /// </summary>
+                public MandatoryHandshakeProtocolClientSide Handshake { get; private set; }
+                
+                protected override void Setup()
+                {
+                    base.Setup();
+                    Handshake = GetComponent<MandatoryHandshakeProtocolClientSide>();
+                }
+
                 /// <summary>
                 ///   Defines all the needed messages. One Logout
                 ///   message and then invokes MakeLoginRequestSenders.

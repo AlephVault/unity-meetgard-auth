@@ -37,8 +37,8 @@ namespace AlephVault.Unity.Meetgard.Auth
             protected new void Awake()
             {
                 base.Awake();
-                OnWelcome += AuthProtocol_OnWelcome;
-                OnTimeout += AuthProtocol_OnTimeout;
+                Handshake.OnWelcome += AuthProtocol_OnWelcome;
+                Handshake.OnTimeout += AuthProtocol_OnTimeout;
                 OnLoginOK += AuthProtocol_OnLoginOK;
                 OnLoginFailed += AuthProtocol_OnLoginFailed;
                 OnKicked += AuthProtocol_OnKicked;
@@ -102,8 +102,8 @@ namespace AlephVault.Unity.Meetgard.Auth
 
             void OnDestroy()
             {
-                OnWelcome -= AuthProtocol_OnWelcome;
-                OnTimeout -= AuthProtocol_OnTimeout;
+                Handshake.OnWelcome -= AuthProtocol_OnWelcome;
+                Handshake.OnTimeout -= AuthProtocol_OnTimeout;
                 OnLoginOK -= AuthProtocol_OnLoginOK;
                 OnLoginFailed -= AuthProtocol_OnLoginFailed;
                 OnKicked -= AuthProtocol_OnKicked;

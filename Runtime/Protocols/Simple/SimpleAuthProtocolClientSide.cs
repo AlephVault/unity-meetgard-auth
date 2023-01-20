@@ -26,6 +26,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             /// <typeparam name="LoginOK">The type of the "successful login" message</typeparam>
             /// <typeparam name="LoginFailed">The type of the "failed login" message</typeparam>
             /// <typeparam name="Kicked">The type of the "kicked" message</typeparam>
+            [RequireComponent(typeof(MandatoryHandshakeProtocolClientSide))]
             public abstract class SimpleAuthProtocolClientSide<Definition, LoginOK, LoginFailed, Kicked> : ProtocolClientSide<Definition>
                 where LoginOK : ISerializable, new()
                 where LoginFailed : ISerializable, new()
@@ -34,6 +35,17 @@ namespace AlephVault.Unity.Meetgard.Auth
             {
                 // This is a sender for the Logout message.
                 private Func<Task> SendLogout;
+
+                /// <summary>
+                ///   The related handshake handler.
+                /// </summary>
+                public MandatoryHandshakeProtocolClientSide Handshake { get; private set; }
+                
+                protected override void Setup()
+                {
+                    base.Setup();
+                    Handshake = GetComponent<MandatoryHandshakeProtocolClientSide>();
+                }
                 
                 /// <summary>
                 ///   Tells whether this client is currently logged
@@ -61,22 +73,6 @@ namespace AlephVault.Unity.Meetgard.Auth
 
                 protected override void SetIncomingMessageHandlers()
                 {
-                    AddIncomingMessageHandler("Welcome", async (proto) =>
-                    {
-                        // The OnWelcome event is triggered. The implementation
-                        // must, as fast as it can, invoke a login method in this
-                        // event handler.
-                        await (OnWelcome?.InvokeAsync() ?? Task.CompletedTask);
-                    });
-                    AddIncomingMessageHandler("Timeout", async (proto) =>
-                    {
-                        // The OnTimeout event is triggered. This is weird to
-                        // occur if the OnWelcome event implements the sending
-                        // of the messages immediately. Nevertheless, the event
-                        // exists because it is triggered. Expect a disconnection
-                        // after this event triggers.
-                        await (OnTimeout?.InvokeAsync() ?? Task.CompletedTask);
-                    });
                     AddIncomingMessageHandler<LoginOK>("OK", async (proto, message) =>
                     {
                         // The OnLoginOK event is triggered.
@@ -141,23 +137,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 {
                     return MakeSender<T>("Login:" + method);
                 }
-
-                /// <summary>
-                ///   Triggered when a Welcome message is received. This message
-                ///   is received after immediately connecting: it is the first
-                ///   message received from the server. This message should be
-                ///   implemented to invoke any of the handlers created with
-                ///   <see cref="MakeLoginRequestSender{T}(string)"/> as fast
-                ///   as it can (immediately, when possible).
-                /// </summary>
-                public event Func<Task> OnWelcome = null;
-
-                /// <summary>
-                ///   Triggered when the server determines the client did not
-                ///   authenticate after a specified time.
-                /// </summary>
-                public event Func<Task> OnTimeout = null;
-
+                
                 /// <summary>
                 ///   Triggered when the client successfully authenticated.
                 /// </summary>

@@ -2,11 +2,9 @@ using AlephVault.Unity.Binary;
 using AlephVault.Unity.Meetgard.Auth.Types;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AlephVault.Unity.Meetgard.Protocols.Simple;
 using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
@@ -28,10 +26,11 @@ namespace AlephVault.Unity.Meetgard.Auth
             /// <typeparam name="LoginFailed">The type of the "failed login" message</typeparam>
             /// <typeparam name="Kicked">The type of the "kicked" message</typeparam>
             /// <typeparam name="AccountIDType">The type of the account id</typeparam>
+            [RequireComponent(typeof(MandatoryHandshakeProtocolServerSide))]
             public abstract partial class SimpleAuthProtocolServerSide<
                 Definition, LoginOK, LoginFailed, Kicked,
                 AccountIDType, AccountPreviewDataType, AccountDataType
-            > : MandatoryHandshakeProtocolServerSide<Definition>
+            > : ProtocolServerSide<Definition>
                 where LoginOK : ISerializable, new()
                 where LoginFailed : ISerializable, new()
                 where Kicked : IKickMessage<Kicked>, new()
@@ -39,6 +38,17 @@ namespace AlephVault.Unity.Meetgard.Auth
                 where AccountDataType : IRecordWithPreview<AccountIDType, AccountPreviewDataType>
                 where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
             {
+                /// <summary>
+                ///   The related handshake handler.
+                /// </summary>
+                public MandatoryHandshakeProtocolServerSide Handshake { get; private set; }
+                
+                protected override void Setup()
+                {
+                    base.Setup();
+                    Handshake = GetComponent<MandatoryHandshakeProtocolServerSide>();
+                }
+
                 /// <summary>
                 ///   Typically, in this Start callback function
                 ///   all the Send* shortcuts will be instantiated.
