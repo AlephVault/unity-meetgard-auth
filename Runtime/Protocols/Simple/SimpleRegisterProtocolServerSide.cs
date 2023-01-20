@@ -63,7 +63,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 /// </summary>
                 /// <param name="failure">The failure to use</param>
                 /// <returns>An appropriate result tuple</returns>
-                protected Tuple<bool, RegisterOK, RegisterFailed> RejectLogin(RegisterFailed failure)
+                protected Tuple<bool, RegisterOK, RegisterFailed> RejectRegister(RegisterFailed failure)
                 {
                     return new Tuple<bool, RegisterOK, RegisterFailed>(false, default, failure);
                 }
@@ -73,7 +73,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                 /// </summary>
                 /// <param name="ok">The success to use (usually trivial)</param>
                 /// <returns>An appropriate result tuple</returns>
-                protected Tuple<bool, RegisterOK, RegisterFailed> AcceptLogin(RegisterOK ok)
+                protected Tuple<bool, RegisterOK, RegisterFailed> AcceptRegister(RegisterOK ok)
                 {
                     return new Tuple<bool, RegisterOK, RegisterFailed>(true, ok, default);
                 }
