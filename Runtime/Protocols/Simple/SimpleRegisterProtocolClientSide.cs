@@ -54,12 +54,14 @@ namespace AlephVault.Unity.Meetgard.Auth
                     {
                         // The OnLoginOK event is triggered. Expect a disconnection
                         // after this event triggers.
+                        client.Close();
                         await (OnRegisterOK?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<RegisterFailed>("Failed", async (proto, message) =>
                     {
                         // The OnRegisterFailed event is triggered. Expect a disconnection
                         // after this event triggers.
+                        client.Close();
                         await (OnRegisterFailed?.InvokeAsync(message) ?? Task.CompletedTask);
                     });
                 }
