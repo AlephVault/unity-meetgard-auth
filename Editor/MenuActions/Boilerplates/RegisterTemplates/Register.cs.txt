@@ -23,12 +23,20 @@ namespace Protocols.Messages
         public string Username;
         public string Password;
         public string PasswordConfirm;
+        // Uncomment this one if your account uses a Display Name,
+        // as part of the account instead of a separate data type.
+        //
+        // public string DisplayName;
 
         public void Serialize(Serializer serializer)
         {
             serializer.Serialize(ref Username);
             serializer.Serialize(ref Password);
             serializer.Serialize(ref PasswordConfirm);
+            // Uncomment this one if your account uses a Display Name,
+            // as part of the account instead of a separate data type.
+            //
+            // serializer.Serialize(ref DisplayName);
         }
     }
 }
