@@ -102,7 +102,8 @@ namespace AlephVault.Unity.Meetgard.Auth
                     AddIncomingMessageHandler("AccountAlreadyInUse", async (proto) =>
                     {
                         // The AccountAlreadyInUse event is triggered. The implementation
-                        // should refresh the UI appropriately.
+                        // should refresh the UI appropriately. Expect a disconnection
+                        // after this event triggers.
                         await (OnAccountAlreadyInUse?.InvokeAsync() ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("AlreadyLoggedIn", async (proto) =>
