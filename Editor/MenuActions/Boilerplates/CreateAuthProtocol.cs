@@ -183,6 +183,9 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     TextAsset defText = AssetDatabase.LoadAssetAtPath<TextAsset>(
                         directory + "/SimpleAuthProtocolDefinition.cs.txt"
                     );
+                    TextAsset uiText = AssetDatabase.LoadAssetAtPath<TextAsset>(
+                        directory + "/SimpleAuthUI.cs.txt"
+                    );
 
                     // The datatype templates.
                     TextAsset loginTypeText = AssetDatabase.LoadAssetAtPath<TextAsset>(
@@ -203,6 +206,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     
                     Dictionary<string, string> replacements = new Dictionary<string, string>
                     {
+                        {"PROTOCOLCLIENTSIDE", basename + "ProtocolClientSide"},
                         {"PROTOCOLDEFINITION", basename + "ProtocolDefinition"},
                         {"LOGIN_TYPE", loginType},
                         {"LOGINFAILED_TYPE", loginFailedType},
@@ -220,6 +224,11 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                                         .IntoDirectory("Protocols", false)
                                             .Do(Boilerplate.InstantiateScriptCodeTemplate(
                                                 pcsText, basename + "ProtocolClientSide", replacements
+                                            ))
+                                        .End()
+                                        .IntoDirectory("UI", false)
+                                            .Do(Boilerplate.InstantiateScriptCodeTemplate(
+                                                uiText, basename + "UI", replacements
                                             ))
                                         .End()
                                     .End()

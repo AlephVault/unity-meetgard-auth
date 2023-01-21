@@ -42,30 +42,12 @@ namespace Client.Authoring.Behaviours.UI
         /// </summary>
         [SerializeField]
         private InputField password;
-
-        /// <summary>
-        ///   The password confirm field.
-        /// </summary>
-        [SerializeField]
-        private InputField passwordConfirm;
         
         /// <summary>
         ///   A status label.
         /// </summary>
         [SerializeField]
         private InputField statusLabel;
-
-        /**
-         * Uncomment this field if the register involves some sort
-         * of display name for the registered accounts, instead of
-         * a separate concept / data type.
-         *
-         * /// <summary>
-         * ///   The display name field.
-         * /// </summary>
-         * [SerializeField]
-         * private InputField displayName;
-         */
         
         /// <summary>
         ///   The submit button.
@@ -89,8 +71,7 @@ namespace Client.Authoring.Behaviours.UI
                                     "#PROTOCOLCLIENTSIDE# attached to it");
             }
             
-            // Remove the comment on the displayName variable if it is used by this form.
-            if (!username || !password || !passwordConfirm /* || displayName */)
+            if (!username || !password)
             {
                 throw new Exception("The register form fields are not properly initialized!");
             }
@@ -106,8 +87,8 @@ namespace Client.Authoring.Behaviours.UI
             submit.onClick.AddListener(OnSubmitClick);
             client.OnConnected += OnClientConnected;
             client.OnDisconnected += OnClientDisconnected;            
-            protocol.OnRegisterOK += OnRegisterOK;
-            protocol.OnRegisterFailed += OnRegisterFailed;
+            protocol.OnLoginOK += OnLoginOK;
+            protocol.OnLoginFailed += OnLoginFailed;
         }
         
         private void OnDestroy()
@@ -115,8 +96,8 @@ namespace Client.Authoring.Behaviours.UI
             submit.onClick.RemoveListener(OnSubmitClick);
             client.OnConnected -= OnClientConnected;
             client.OnDisconnected -= OnClientDisconnected;            
-            protocol.OnRegisterOK -= OnRegisterOK;
-            protocol.OnRegisterFailed -= OnRegisterFailed;
+            protocol.OnLoginOK -= OnLoginOK;
+            protocol.OnLoginFailed -= OnLoginFailed;
         }
         
         private void OnClientConnected()
@@ -131,15 +112,15 @@ namespace Client.Authoring.Behaviours.UI
             submit.interactable = true;
         }
         
-        private async Task OnRegisterOK(Nothing _)
+        private async Task OnLoginOK(Nothing _)
         {
-            // Please note: The argument type must match the Register protocol definition!
-            SetStatus("Register was successful!");
+            // Please note: The argument type must match the Auth protocol definition!
+            SetStatus("Login was successful!");
         }
         
-        private async Task OnRegisterFailed(#REGISTERFAILED_TYPE# reason)
+        private async Task OnLoginFailed(#LOGINFAILED_TYPE# reason)
         {
-            // Please note: The argument type must match the Register protocol definition!
+            // Please note: The argument type must match the Auth protocol definition!
             SetStatus(reason.Reason);
         }
         
@@ -164,14 +145,11 @@ namespace Client.Authoring.Behaviours.UI
         
         private async Task OnWelcome()
         {
-            SetStatus("Registering...");
+            SetStatus("Loggin in...");
             protocol.Handshake.OnWelcome -= OnWelcome;
-            await protocol.DefaultRegisterSender(new #REGISTER_TYPE#() {
+            await protocol.DefaultLoginSender(new #LOGIN_TYPE#() {
                 Username = username.text,
-                Password = password.text,
-                PasswordConfirm = passwordConfirm.text,
-                // Uncomment the following line if your register makes use of DisplayName.
-                /* DisplayName = displayName.text */
+                Password = password.text
             });
         }
         
