@@ -120,6 +120,9 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     TextAsset defText = AssetDatabase.LoadAssetAtPath<TextAsset>(
                         directory + "/SimpleRegisterProtocolDefinition.cs.txt"
                     );
+                    TextAsset uiText = AssetDatabase.LoadAssetAtPath<TextAsset>(
+                        directory + "/SimpleRegisterUI.cs.txt"
+                    );
 
                     // The datatype templates.
                     TextAsset registerTypeText = AssetDatabase.LoadAssetAtPath<TextAsset>(
@@ -131,6 +134,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     
                     Dictionary<string, string> replacements = new Dictionary<string, string>
                     {
+                        {"PROTOCOLCLIENTSIDE", basename + "ProtocolClientSide"},
                         {"PROTOCOLDEFINITION", basename + "ProtocolDefinition"},
                         {"REGISTER_TYPE", registerType},
                         {"REGISTERFAILED_TYPE", registerFailedType},
@@ -144,6 +148,11 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                                         .IntoDirectory("Protocols", false)
                                             .Do(Boilerplate.InstantiateScriptCodeTemplate(
                                                 pcsText, basename + "ProtocolClientSide", replacements
+                                            ))
+                                        .End()
+                                        .IntoDirectory("UI", false)
+                                            .Do(Boilerplate.InstantiateScriptCodeTemplate(
+                                                uiText, basename + "UI", replacements
                                             ))
                                         .End()
                                     .End()
