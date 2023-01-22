@@ -23,7 +23,6 @@ namespace AlephVault.Unity.Meetgard
                 public class CreateRegisterProtocolWindow : EditorWindow
                 {
                     private Regex nameCriterion = new Regex("^[A-Z][A-Za-z0-9_]*$");
-                    private Regex existingNameCriterion = new Regex("^[A-Za-z][A-Za-z0-9_]*$");
 
                     // The base name to use.
                     private string baseName = "MySimpleRegister";
@@ -192,7 +191,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                 public static void ExecuteBoilerplate()
                 {
                     CreateRegisterProtocolWindow window = ScriptableObject.CreateInstance<CreateRegisterProtocolWindow>();
-                    Vector2 size = new Vector2(750, 394);
+                    Vector2 size = new Vector2(750, 300);
                     window.position = new Rect(new Vector2(110, 250), size);
                     window.minSize = size;
                     window.maxSize = size;
