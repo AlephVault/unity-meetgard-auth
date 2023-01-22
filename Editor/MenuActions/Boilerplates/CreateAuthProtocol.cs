@@ -23,7 +23,7 @@ namespace AlephVault.Unity.Meetgard
                 public class CreateAuthProtocolWindow : EditorWindow
                 {
                     private Regex nameCriterion = new Regex("^[A-Z][A-Za-z0-9_]*$");
-                    private Regex existingNameCriterion = new Regex("^[A-Za-z][A-Za-z0-9_]*$");
+                    private Regex existingNameCriterion = new Regex("^([A-Za-z][A-Za-z0-9_]*\\.)*[A-Za-z][A-Za-z0-9_]*$");
 
                     // The base name to use.
                     private string baseName = "MySimpleAuth";
