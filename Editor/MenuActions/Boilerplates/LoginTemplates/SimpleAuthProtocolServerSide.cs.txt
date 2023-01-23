@@ -97,11 +97,11 @@ namespace Server.Authoring.Behaviours.Protocols
         /**
          * This class has the following events that can be listened for. They are:
          *
-         * - OnSessionStarting = async (connection, fullAccountData) { ... }; for when
+         * - OnSessionStarting = async (connection, fullAccountData) => { ... }; for when
          *   the login was successful and the session is starting. The session should
          *   store some data by grabbing it from the fullAccountData.
          *
-         * - OnSessionTerminating = async (connection, reason) { ... }; for when the account
+         * - OnSessionTerminating = async (connection, reason) => { ... }; for when the account
          *   is being disconnected and the session is terminating for it. However, for
          *   that moment the session data still exists, and this is a last opportunity
          *   to read data from it and do something with it.
@@ -123,7 +123,7 @@ namespace Server.Authoring.Behaviours.Protocols
          * Finally, this class has methods that are of interest of a login protocol: those for
          * actually restricting requests from non-logged users. These methods are:
          *
-         * - handler = LoginRequired([async (connection) { ... return whether connection is allowed}, ]handler)
+         * - handler = LoginRequired([async (connection) => { ... return whether connection is allowed}, ]handler)
          *   Checks whether the connection is logged in and allowed to perform the action.
          *   A new handler is returned, which typically becomes the value for a call to
          *   AddIncomingMessageHandler in another protocol.
