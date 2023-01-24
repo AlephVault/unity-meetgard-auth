@@ -275,7 +275,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                 /// <summary>
                 ///   Opens a dialog to execute the strategy creation boilerplate.
                 /// </summary>
-                [MenuItem("Assets/Create/Meetgard.Auth/Boilerplates/Create Simple Auth Protocol", false, 12)]
+                [MenuItem("Assets/Create/Meetgard.Auth/Boilerplates/Create Simple Auth Protocol", false, 201)]
                 public static void ExecuteBoilerplate()
                 {
                     CreateAuthProtocolWindow window = ScriptableObject.CreateInstance<CreateAuthProtocolWindow>();
