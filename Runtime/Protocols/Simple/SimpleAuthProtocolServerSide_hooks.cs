@@ -4,6 +4,7 @@ using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AlephVault.Unity.Support.Utils;
 
 namespace AlephVault.Unity.Meetgard.Auth
 {
@@ -108,20 +109,12 @@ namespace AlephVault.Unity.Meetgard.Auth
                     //   5.2. Send a kick message with "unexpected error on session start".
                     //   5.3. Close the connection.
                     AddSession(clientId, accountId);
-                    try
+                    await (OnSessionStarting?.InvokeAsync(clientId, accountData, async (e) =>
                     {
-                        foreach(var handler in OnSessionStarting.GetInvocationList()) await ((Func<ulong, AccountDataType, Task>)handler)(clientId, accountData);
-                    }
-                    catch(Exception e)
-                    {
-                        try
-                        {
-                            await OnSessionError(clientId, SessionStage.Initialization, e);
-                        }
-                        catch { /* Diaper pattern - intentional */ }
+                        await OnSessionError(clientId, SessionStage.Initialization, e);
                         _ = SendKicked(clientId, new Kicked().WithSessionInitializationErrorReason());
                         server.Close(clientId);
-                    }
+                    }) ?? Task.CompletedTask);
                 }
 
                 // This function is invoked when a client was logged out due
@@ -138,18 +131,10 @@ namespace AlephVault.Unity.Meetgard.Auth
                     //   3.1. Handle the error appropriately.
                     // 4. Remove the session.
                     // 5. Close the connection.
-                    try
+                    await (OnSessionTerminating?.InvokeAsync(clientId, reason, async (e) =>
                     {
-                        foreach (var handler in OnSessionTerminating.GetInvocationList()) await ((Func<ulong, Kicked, Task>)handler)(clientId, reason);
-                    }
-                    catch (Exception e)
-                    {
-                        try
-                        {
-                            await OnSessionError(clientId, SessionStage.Termination, e);
-                        }
-                        catch { /* Diaper pattern - intentional */ }
-                    }
+                        await OnSessionError(clientId, SessionStage.Termination, e);
+                    }) ?? Task.CompletedTask);
                     RemoveSession(clientId);
                     try
                     {
