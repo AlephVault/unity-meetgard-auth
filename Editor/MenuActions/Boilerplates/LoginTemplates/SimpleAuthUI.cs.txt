@@ -145,7 +145,7 @@ namespace Client.Authoring.Behaviours.UI
         
         private async Task OnWelcome()
         {
-            SetStatus("Loggin in...");
+            SetStatus("Logging in...");
             protocol.Handshake.OnWelcome -= OnWelcome;
             await protocol.DefaultLoginSender(new #LOGIN_TYPE#() {
                 Username = username.text,
