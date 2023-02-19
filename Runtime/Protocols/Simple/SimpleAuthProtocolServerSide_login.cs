@@ -83,7 +83,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                                         Debug.LogWarning($"Login was successful but a {typeof(AccountIDType).FullName} argument " +
                                                          "is not specified");
                                     }
-                                    _ = SendLoginOK(clientId, result.Item2);
+                                    await SendLoginOK(clientId, result.Item2);
                                     await OnLoggedIn(clientId, result.Item4);
                                 }
                                 else
@@ -103,7 +103,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                                         Debug.LogWarning($"Login was unsuccessful but a {typeof(AccountIDType).FullName} argument " +
                                                          $"is specified: {result.Item3}");
                                     }
-                                    _ = SendLoginFailed(clientId, result.Item3);
+                                    await SendLoginFailed(clientId, result.Item3);
                                     server.Close(clientId);
                                 }
                             }

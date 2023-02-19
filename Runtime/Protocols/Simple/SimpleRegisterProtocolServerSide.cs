@@ -132,7 +132,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                                         Debug.LogWarning($"Register was successful but a {typeof(RegisterOK).FullName} argument " +
                                                          "is not specified");
                                     }
-                                    _ = SendRegisterOK(clientId, result.Item2);
+                                    await SendRegisterOK(clientId, result.Item2);
                                 }
                                 else
                                 {
@@ -146,7 +146,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                                         Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterOK).FullName} argument " +
                                                          $"is specified: {result.Item2}");
                                     }
-                                    _ = SendRegisterFailed(clientId, result.Item3);
+                                    await SendRegisterFailed(clientId, result.Item3);
                                 }
                             }
                         });
