@@ -53,7 +53,7 @@ namespace Client.Authoring.Behaviours.UI
         ///   A status label.
         /// </summary>
         [SerializeField]
-        private InputField statusLabel;
+        private Text statusLabel;
 
         /**
          * Uncomment this field if the register involves some sort

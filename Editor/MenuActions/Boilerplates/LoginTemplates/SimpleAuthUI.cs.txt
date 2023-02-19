@@ -47,7 +47,7 @@ namespace Client.Authoring.Behaviours.UI
         ///   A status label.
         /// </summary>
         [SerializeField]
-        private InputField statusLabel;
+        private Text statusLabel;
         
         /// <summary>
         ///   The submit button.
