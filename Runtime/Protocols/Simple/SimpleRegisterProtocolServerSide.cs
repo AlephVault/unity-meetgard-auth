@@ -138,12 +138,12 @@ namespace AlephVault.Unity.Meetgard.Auth
                                 {
                                     if (EqualityComparer<RegisterFailed>.Default.Equals(result.Item3, default))
                                     {
-                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(RegisterFailed).FullName} argument " +
+                                        Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterFailed).FullName} argument " +
                                                          "is not specified");
                                     }
                                     if (!EqualityComparer<RegisterOK>.Default.Equals(result.Item2, default))
                                     {
-                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(RegisterOK).FullName} argument " +
+                                        Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterOK).FullName} argument " +
                                                          $"is specified: {result.Item2}");
                                     }
                                     _ = SendRegisterFailed(clientId, result.Item3);
