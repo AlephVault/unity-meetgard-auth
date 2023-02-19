@@ -160,7 +160,11 @@ namespace Client.Authoring.Behaviours.UI
         
         private void SetStatus(string value)
         {
-            if (statusLabel) statusLabel.text = value;
+            if (statusLabel) {
+                protocol.RunInMainThread(() => {
+                    statusLabel.text = value;
+                });
+            }
         }
     }
 }
