@@ -55,6 +55,18 @@ namespace Client.Authoring.Behaviours.UI
         [SerializeField]
         private Button submit;
         
+        /// <summary>
+        ///   The UI to show when online.
+        /// </summary>
+        [SerializeField]
+        private GameObject onlineUI;
+        
+        /// <summary>
+        ///   The UI to show when offline.
+        /// </summary>
+        [SerializeField]
+        private GameObject offlineUI;
+        
         // The client's register protocol.
         private #PROTOCOLCLIENTSIDE# protocol;
                  
@@ -80,6 +92,14 @@ namespace Client.Authoring.Behaviours.UI
             {
                 throw new Exception("The submit button is not properly initialized!");
             }
+        }
+        
+        private Task UseCanvas(bool online)
+        {
+            return protocol.RunInMainThread(() => {
+                onlineUI.SetActive(online);
+                offlineUI.SetActive(!online);
+            });
         }
         
         private void Start()
@@ -110,12 +130,14 @@ namespace Client.Authoring.Behaviours.UI
             protocol.Handshake.OnWelcome -= OnWelcome;
             protocol.Handshake.OnTimeout -= OnTimeout;
             submit.interactable = true;
+            UseCanvas(false);
         }
         
         private async Task OnLoginOK(Nothing _)
         {
             // Please note: The argument type must match the Auth protocol definition!
             SetStatus("Login was successful!");
+            await UseCanvas(true);
         }
         
         private async Task OnLoginFailed(#LOGINFAILED_TYPE# reason)
