@@ -43,6 +43,10 @@ namespace Server.Authoring.Behaviours.Protocols
                 // reason must be generated, of type: #REGISTERFAILED_TYPE#.
                 //
                 // return RejectRegister(unsuccessfulReason);
+                
+                // WARNING: EVERY CALL TO AN EXTERNAL API OR USING A GAME OBJECT
+                //          OR BEHAVIOUR MUST BE DONE IN THE CONTEXT OF A CALL TO
+                //          RunInMainThread OR IT WILL SILENTLY FAIL.
 
                 if (register.Password != register.PasswordConfirm)
                 {

@@ -48,6 +48,10 @@ namespace Server.Authoring.Behaviours.Protocols
                 // reason must be generated, of type: #LOGINFAILED_TYPE#.
                 //
                 // return RejectLogin(unsuccessfulReason);
+
+                // WARNING: EVERY CALL TO AN EXTERNAL API OR USING A GAME OBJECT
+                //          OR BEHAVIOUR MUST BE DONE IN THE CONTEXT OF A CALL TO
+                //          RunInMainThread OR IT WILL SILENTLY FAIL.
                 
                 return RejectLogin(new #LOGINFAILED_TYPE#().WithNotImplementedReason());
             });
@@ -66,6 +70,11 @@ namespace Server.Authoring.Behaviours.Protocols
             // This requires a mandatory implementation, for returning the default
             // value will cause the protocol to raise an exception and terminate
             // the session (& connection) abruptly and without even starting.
+
+            // WARNING: EVERY CALL TO AN EXTERNAL API OR USING A GAME OBJECT
+            //          OR BEHAVIOUR MUST BE DONE IN THE CONTEXT OF A CALL TO
+            //          RunInMainThread OR IT WILL SILENTLY FAIL.
+
             return default(#ACCOUNTDATA_TYPE#);
         }
         
@@ -92,6 +101,10 @@ namespace Server.Authoring.Behaviours.Protocols
             // - SessionStage.Initialization: The session was being initialized.
             // - SessionStage.PermissionCheck: The session was checking a permission for a LoginRequired message.
             // - SessionStage.Termination: The session was terminating.
+
+            // WARNING: EVERY CALL TO AN EXTERNAL API OR USING A GAME OBJECT
+            //          OR BEHAVIOUR MUST BE DONE IN THE CONTEXT OF A CALL TO
+            //          RunInMainThread OR IT WILL SILENTLY FAIL.
         }
         
         /**
