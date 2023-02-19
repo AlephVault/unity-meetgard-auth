@@ -21,6 +21,7 @@ namespace AlephVault.Unity.Meetgard.Auth
             /// <typeparam name="Definition">A subclass of <see cref="SimpleRegisterProtocolDefinition{RegisterOK, RegisterFailed}"/></typeparam>
             /// <typeparam name="RegisterOK"></typeparam>
             /// <typeparam name="RegisterFailed"></typeparam>
+            [RequireComponent(typeof(MandatoryHandshakeProtocolServerSide))]
             public abstract class SimpleRegisterProtocolServerSide<
                 Definition, RegisterOK, RegisterFailed
             > : ProtocolServerSide<Definition>
