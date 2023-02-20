@@ -4,6 +4,7 @@ using AlephVault.Unity.Meetgard.Protocols;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
 using System;
 using System.Threading.Tasks;
+using AlephVault.Unity.Support.Utils;
 
 namespace AlephVault.Unity.Meetgard.Auth
 {
@@ -40,7 +41,11 @@ namespace AlephVault.Unity.Meetgard.Auth
                             {
                                 await OnSessionError(clientId, SessionStage.PermissionCheck, e);
                             }
-                            catch { /* Diaper pattern - intentional */ }
+                            catch (Exception e2)
+                            {
+                                await Tasks.DefaultOnError(e);
+                            }
+
                             return false;
                         }
                     };

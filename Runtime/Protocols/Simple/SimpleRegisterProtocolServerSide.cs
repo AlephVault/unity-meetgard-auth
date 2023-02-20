@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AlephVault.Unity.Binary;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Server;
+using AlephVault.Unity.Support.Utils;
 using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
@@ -118,37 +119,48 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // 3. On success: trigger the success.
                         // 4. On failure: trigger the failure.
                         await Exclusive(async () => {
-                            if (Handshake.RemoveHandshakePending(clientId))
+                            try
                             {
-                                Tuple<bool, RegisterOK, RegisterFailed> result = await doRegister(message);
-                                if (result.Item1)
+                                if (Handshake.RemoveHandshakePending(clientId))
                                 {
-                                    if (!EqualityComparer<RegisterFailed>.Default.Equals(result.Item3, default))
+                                    Tuple<bool, RegisterOK, RegisterFailed> result = await doRegister(message);
+                                    if (result.Item1)
                                     {
-                                        Debug.LogWarning($"Register was successful but a {typeof(RegisterFailed).FullName} argument " +
-                                                         $"is specified: {result.Item3}");
+                                        if (!EqualityComparer<RegisterFailed>.Default.Equals(result.Item3, default))
+                                        {
+                                            Debug.LogWarning($"Register was successful but a {typeof(RegisterFailed).FullName} argument " +
+                                                             $"is specified: {result.Item3}");
+                                        }
+                                        if (EqualityComparer<RegisterOK>.Default.Equals(result.Item2, default))
+                                        {
+                                            Debug.LogWarning($"Register was successful but a {typeof(RegisterOK).FullName} argument " +
+                                                             "is not specified");
+                                        }
+                                        await SendRegisterOK(clientId, result.Item2);
                                     }
-                                    if (EqualityComparer<RegisterOK>.Default.Equals(result.Item2, default))
+                                    else
                                     {
-                                        Debug.LogWarning($"Register was successful but a {typeof(RegisterOK).FullName} argument " +
-                                                         "is not specified");
+                                        if (EqualityComparer<RegisterFailed>.Default.Equals(result.Item3, default))
+                                        {
+                                            Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterFailed).FullName} argument " +
+                                                             "is not specified");
+                                        }
+                                        if (!EqualityComparer<RegisterOK>.Default.Equals(result.Item2, default))
+                                        {
+                                            Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterOK).FullName} argument " +
+                                                             $"is specified: {result.Item2}");
+                                        }
+                                        await SendRegisterFailed(clientId, result.Item3);
                                     }
-                                    await SendRegisterOK(clientId, result.Item2);
                                 }
-                                else
-                                {
-                                    if (EqualityComparer<RegisterFailed>.Default.Equals(result.Item3, default))
-                                    {
-                                        Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterFailed).FullName} argument " +
-                                                         "is not specified");
-                                    }
-                                    if (!EqualityComparer<RegisterOK>.Default.Equals(result.Item2, default))
-                                    {
-                                        Debug.LogWarning($"Register was unsuccessful but a {typeof(RegisterOK).FullName} argument " +
-                                                         $"is specified: {result.Item2}");
-                                    }
-                                    await SendRegisterFailed(clientId, result.Item3);
-                                }
+                            }
+                            catch (Exception e)
+                            {
+                                await Tasks.DefaultOnError(e);
+                                Debug.LogError("The connection will abruptly terminate now, since it cannot " +
+                                               "determine a proper register failure to send. This is wrong. Fix your " +
+                                               "error as soon as possible.");
+                                server.Close(clientId);
                             }
                         });
                     });

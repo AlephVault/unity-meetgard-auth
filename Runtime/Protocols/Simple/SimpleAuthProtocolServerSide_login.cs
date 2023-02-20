@@ -2,6 +2,7 @@ using AlephVault.Unity.Binary;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AlephVault.Unity.Support.Utils;
 using UnityEngine;
 
 namespace AlephVault.Unity.Meetgard.Auth
@@ -63,49 +64,60 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // 3. On success: trigger the success.
                         // 4. On failure: trigger the failure.
                         await Exclusive(async () => {
-                            if (Handshake.RemoveHandshakePending(clientId))
+                            try
                             {
-                                Tuple<bool, LoginOK, LoginFailed, AccountIDType> result = await doLogin(message);
-                                if (result.Item1)
+                                if (Handshake.RemoveHandshakePending(clientId))
                                 {
-                                    if (!EqualityComparer<LoginFailed>.Default.Equals(result.Item3, default))
+                                    Tuple<bool, LoginOK, LoginFailed, AccountIDType> result = await doLogin(message);
+                                    if (result.Item1)
                                     {
-                                        Debug.LogWarning($"Login was successful but a {typeof(LoginFailed).FullName} argument " +
-                                                         $"is specified: {result.Item3}");
+                                        if (!EqualityComparer<LoginFailed>.Default.Equals(result.Item3, default))
+                                        {
+                                            Debug.LogWarning($"Login was successful but a {typeof(LoginFailed).FullName} argument " +
+                                                             $"is specified: {result.Item3}");
+                                        }
+                                        if (EqualityComparer<LoginOK>.Default.Equals(result.Item2, default))
+                                        {
+                                            Debug.LogWarning($"Login was successful but a {typeof(LoginOK).FullName} argument " +
+                                                             "is not specified");
+                                        }
+                                        if (EqualityComparer<AccountIDType>.Default.Equals(result.Item4, default))
+                                        {
+                                            Debug.LogWarning($"Login was successful but a {typeof(AccountIDType).FullName} argument " +
+                                                             "is not specified");
+                                        }
+                                        await SendLoginOK(clientId, result.Item2);
+                                        await OnLoggedIn(clientId, result.Item4);
                                     }
-                                    if (EqualityComparer<LoginOK>.Default.Equals(result.Item2, default))
+                                    else
                                     {
-                                        Debug.LogWarning($"Login was successful but a {typeof(LoginOK).FullName} argument " +
-                                                         "is not specified");
+                                        if (EqualityComparer<LoginFailed>.Default.Equals(result.Item3, default))
+                                        {
+                                            Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginFailed).FullName} argument " +
+                                                             "is not specified");
+                                        }
+                                        if (!EqualityComparer<LoginOK>.Default.Equals(result.Item2, default))
+                                        {
+                                            Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginOK).FullName} argument " +
+                                                             $"is specified: {result.Item2}");
+                                        }
+                                        if (!EqualityComparer<AccountIDType>.Default.Equals(result.Item4, default))
+                                        {
+                                            Debug.LogWarning($"Login was unsuccessful but a {typeof(AccountIDType).FullName} argument " +
+                                                             $"is specified: {result.Item3}");
+                                        }
+                                        await SendLoginFailed(clientId, result.Item3);
+                                        server.Close(clientId);
                                     }
-                                    if (EqualityComparer<AccountIDType>.Default.Equals(result.Item4, default))
-                                    {
-                                        Debug.LogWarning($"Login was successful but a {typeof(AccountIDType).FullName} argument " +
-                                                         "is not specified");
-                                    }
-                                    await SendLoginOK(clientId, result.Item2);
-                                    await OnLoggedIn(clientId, result.Item4);
                                 }
-                                else
-                                {
-                                    if (EqualityComparer<LoginFailed>.Default.Equals(result.Item3, default))
-                                    {
-                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginFailed).FullName} argument " +
-                                                         "is not specified");
-                                    }
-                                    if (!EqualityComparer<LoginOK>.Default.Equals(result.Item2, default))
-                                    {
-                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(LoginOK).FullName} argument " +
-                                                         $"is specified: {result.Item2}");
-                                    }
-                                    if (!EqualityComparer<AccountIDType>.Default.Equals(result.Item4, default))
-                                    {
-                                        Debug.LogWarning($"Login was unsuccessful but a {typeof(AccountIDType).FullName} argument " +
-                                                         $"is specified: {result.Item3}");
-                                    }
-                                    await SendLoginFailed(clientId, result.Item3);
-                                    server.Close(clientId);
-                                }
+                            }
+                            catch (Exception e)
+                            {
+                                await Tasks.DefaultOnError(e);
+                                Debug.LogError("The connection will abruptly terminate now, since it cannot " +
+                                               "determine a proper login failure to send. This is wrong. Fix your " +
+                                               "error as soon as possible.");
+                                server.Close(clientId);
                             }
                         });
                     }));

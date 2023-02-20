@@ -97,7 +97,10 @@ namespace AlephVault.Unity.Meetgard.Auth
                         {
                             await OnSessionError(clientId, SessionStage.AccountLoad, e);
                         }
-                        catch { /* Diaper pattern - intentional */ }
+                        catch (Exception e2)
+                        {
+                            await Tasks.DefaultOnError(e2);
+                        }
                         _ = SendKicked(clientId, new Kicked().WithAccountLoadErrorReason());
                         server.Close(clientId);
                         return;
@@ -111,7 +114,14 @@ namespace AlephVault.Unity.Meetgard.Auth
                     AddSession(clientId, accountId);
                     await (OnSessionStarting?.InvokeAsync(clientId, accountData, async (e) =>
                     {
-                        await OnSessionError(clientId, SessionStage.Initialization, e);
+                        try
+                        {
+                            await OnSessionError(clientId, SessionStage.Initialization, e);
+                        }
+                        catch (Exception e2)
+                        {
+                            await Tasks.DefaultOnError(e);
+                        }
                         _ = SendKicked(clientId, new Kicked().WithSessionInitializationErrorReason());
                         server.Close(clientId);
                     }) ?? Task.CompletedTask);
@@ -133,7 +143,14 @@ namespace AlephVault.Unity.Meetgard.Auth
                     // 5. Close the connection.
                     await (OnSessionTerminating?.InvokeAsync(clientId, reason, async (e) =>
                     {
-                        await OnSessionError(clientId, SessionStage.Termination, e);
+                        try
+                        {
+                            await OnSessionError(clientId, SessionStage.Initialization, e);
+                        }
+                        catch (Exception e2)
+                        {
+                            await Tasks.DefaultOnError(e);
+                        }
                     }) ?? Task.CompletedTask);
                     RemoveSession(clientId);
                     try

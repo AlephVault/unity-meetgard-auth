@@ -77,14 +77,14 @@ namespace AlephVault.Unity.Meetgard.Auth
                     {
                         // The OnLoginOK event is triggered.
                         LoggedIn = true;
-                        await (OnLoginOK?.InvokeAsync(message) ?? Task.CompletedTask);
+                        await (OnLoginOK?.InvokeAsync(message, Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<LoginFailed>("Failed", async (proto, message) =>
                     {
                         // The OnLoginFailed event is triggered. Expect a disconnection
                         // after this event triggers.
                         client.Close();
-                        await (OnLoginFailed?.InvokeAsync(message) ?? Task.CompletedTask);
+                        await (OnLoginFailed?.InvokeAsync(message, Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler<Kicked>("Kicked", async (proto, message) =>
                     {
@@ -92,7 +92,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // after this event triggers.
                         LoggedIn = false;
                         client.Close();
-                        await (OnKicked?.InvokeAsync(message) ?? Task.CompletedTask);
+                        await (OnKicked?.InvokeAsync(message, Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("LoggedOut", async (proto) =>
                     {
@@ -100,7 +100,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // after this event triggers.
                         LoggedIn = false;
                         client.Close();
-                        await (OnLoggedOut?.InvokeAsync() ?? Task.CompletedTask);
+                        await (OnLoggedOut?.InvokeAsync(Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("AccountAlreadyInUse", async (proto) =>
                     {
@@ -108,25 +108,25 @@ namespace AlephVault.Unity.Meetgard.Auth
                         // should refresh the UI appropriately. Expect a disconnection
                         // after this event triggers.
                         client.Close();
-                        await (OnAccountAlreadyInUse?.InvokeAsync() ?? Task.CompletedTask);
+                        await (OnAccountAlreadyInUse?.InvokeAsync(Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("AlreadyLoggedIn", async (proto) =>
                     {
                         // The AlreadyLoggedIn event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnAlreadyLoggedIn?.InvokeAsync() ?? Task.CompletedTask);
+                        await (OnAlreadyLoggedIn?.InvokeAsync(Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("NotLoggedIn", async (proto) =>
                     {
                         // The NotLoggedIn event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnNotLoggedIn?.InvokeAsync() ?? Task.CompletedTask);
+                        await (OnNotLoggedIn?.InvokeAsync(Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                     AddIncomingMessageHandler("Forbidden", async (proto) =>
                     {
                         // The Forbidden event is triggered. The implementation
                         // should refresh the UI appropriately.
-                        await (OnForbidden?.InvokeAsync() ?? Task.CompletedTask);
+                        await (OnForbidden?.InvokeAsync(Tasks.DefaultOnError) ?? Task.CompletedTask);
                     });
                 }
 
