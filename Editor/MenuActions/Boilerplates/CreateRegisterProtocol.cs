@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using AlephVault.Unity.Boilerplates.Utils;
+using AlephVault.Unity.MenuActions.Types;
 using AlephVault.Unity.MenuActions.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace AlephVault.Unity.Meetgard
                 ///   a name only, and the three files (definition, server and
                 ///   client sides) will be generated out of it.
                 /// </summary>
-                public class CreateRegisterProtocolWindow : EditorWindow
+                public class CreateRegisterProtocolWindow : SmartEditorWindow
                 {
                     private Regex nameCriterion = new Regex("^[A-Z][A-Za-z0-9_]*$");
 
@@ -33,12 +34,15 @@ namespace AlephVault.Unity.Meetgard
                     // The name of the RegisterFailed message type.
                     private string registerFailedType = "RegisterFailed";
                     
-                    private void OnGUI()
+                    protected override float GetSmartWidth()
+                    {
+                        return 730;
+                    }
+                    
+                    protected override void OnAdjustedGUI()
                     {
                         GUIStyle longLabelStyle = MenuActionUtils.GetSingleLabelStyle();
 
-                        EditorGUILayout.BeginVertical();
-                        
                         EditorGUILayout.LabelField(@"
 This utility generates the three protocol files, with boilerplate code and instructions on how to understand that code.
 
@@ -86,11 +90,8 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         }
                         EditorGUILayout.EndHorizontal();
                         
-                        bool execute = validBaseName && validRegisterType && validRegisterFailedType &&
-                                       GUILayout.Button("Generate");
-                        EditorGUILayout.EndVertical();
-                        
-                        if (execute) Execute();
+                        if (validBaseName && validRegisterType && validRegisterFailedType)
+                            SmartButton("Generate", Execute);
                     }
 
                     private void Execute()
@@ -98,7 +99,6 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         DumpProtocolTemplates(
                             baseName, registerType, registerFailedType
                         );
-                        Close();
                     }
                 }
 

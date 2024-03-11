@@ -1,8 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using AlephVault.Unity.Boilerplates.Utils;
+using AlephVault.Unity.MenuActions.Types;
 using AlephVault.Unity.MenuActions.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -20,7 +19,7 @@ namespace AlephVault.Unity.Meetgard
                 ///   a name only, and the three files (definition, server and
                 ///   client sides) will be generated out of it.
                 /// </summary>
-                public class CreateAuthProtocolWindow : EditorWindow
+                public class CreateAuthProtocolWindow : SmartEditorWindow
                 {
                     private Regex nameCriterion = new Regex("^[A-Z][A-Za-z0-9_]*$");
                     private Regex existingNameCriterion = new Regex("^([A-Za-z][A-Za-z0-9_]*\\.)*[A-Za-z][A-Za-z0-9_]*$");
@@ -50,14 +49,17 @@ namespace AlephVault.Unity.Meetgard
                     // as the Login, LoginFailed and Kicked types).
                     private string accountPreviewDataType = "AccountPreviewData";
 
-                    private void OnGUI()
+                    protected override float GetSmartWidth()
+                    {
+                        return 730;
+                    }
+                    
+                    protected override void OnAdjustedGUI()
                     {
                         GUIStyle longLabelStyle = MenuActionUtils.GetSingleLabelStyle();
                         GUIStyle captionLabelStyle = MenuActionUtils.GetCaptionLabelStyle();
                         GUIStyle indentedStyle = MenuActionUtils.GetIndentedStyle();
 
-                        EditorGUILayout.BeginVertical();
-                        
                         EditorGUILayout.LabelField(@"
 This utility generates the three protocol files, with boilerplate code and instructions on how to understand that code.
 
@@ -147,12 +149,9 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         }
                         EditorGUILayout.EndHorizontal();
                         
-                        bool execute = validBaseName && validLoginType && validLoginFailedType &&
-                                       validKickedType && validAccountIdType && validAccountPreviewDataType &&
-                                       validAccountDataType && GUILayout.Button("Generate");
-                        EditorGUILayout.EndVertical();
-                        
-                        if (execute) Execute();
+                        if (validBaseName && validLoginType && validLoginFailedType &&
+                            validKickedType && validAccountIdType && validAccountPreviewDataType &&
+                            validAccountDataType) SmartButton("Generate", Execute);
                     }
 
                     private void Execute()
@@ -161,7 +160,6 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                             baseName, loginType, loginFailedType, kickedType, accountIdType,
                             accountPreviewDataType, accountDataType
                         );
-                        Close();
                     }
                 }
 
