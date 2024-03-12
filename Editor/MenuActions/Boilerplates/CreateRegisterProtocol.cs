@@ -187,7 +187,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                 /// <summary>
                 ///   Opens a dialog to execute the protocol creation boilerplate.
                 /// </summary>
-                [MenuItem("Assets/Create/AlephVault/Meetgard.Auth/Boilerplates/Create Simple Register Protocol", false, 201)]
+                [MenuItem("Assets/Create/Aleph Vault/Meetgard.Auth/Boilerplates/Create Simple Register Protocol", false, 201)]
                 public static void ExecuteBoilerplate()
                 {
                     CreateRegisterProtocolWindow window = ScriptableObject.CreateInstance<CreateRegisterProtocolWindow>();
