@@ -145,7 +145,7 @@ namespace AlephVault.Unity.Meetgard.Auth
                     {
                         try
                         {
-                            await OnSessionError(clientId, SessionStage.Initialization, e);
+                            await OnSessionError(clientId, SessionStage.Termination, e);
                         }
                         catch (Exception e2)
                         {
