@@ -453,6 +453,8 @@ Pay attention to the implementation:
 
 The generated code is self-documented on when each callback is triggered.
 
+Also, there's a `Logout()` method. It sends a disconnection message and then, after it was sent, closes the connection on the client side.
+
 #### The protocol implementation: Server side
 
 This one is located at: `Assets/Scripts/Server/Authoring/Behaviours/Protocols/ExampleMySimpleAuthProtocolServerSide.cs` and looks like this:
@@ -650,7 +652,216 @@ There are many versions of `LoginRequired` which may be used by different protoc
 1. `callback = loginProtocolComponent.LoginRequired(async (...) => {})` only checks if the user is logged in.
 2. `callback = loginProtocolComponent.LoginRequired(async (ulong connection) => { /* return true if the connection is allowed for this command, or false if not */ }, async (...) => {})` also checks if the connection is allowed to execute this command. If the check callback returns false, the user is not allowed and the client will have the `OnForbidden` callback triggered.
 
-####
+#### Finally, the UI component
+
+A `UI` component is also generated: `ExampleMySimpleAuthUI`. It's located at: `Assets/Scripts/Client/Authoring/Behaviours/UI/ExampleMySimpleAuthUI.cs`. It looks like this:
+
+```csharp
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.UI;
+using AlephVault.Unity.Meetgard.Authoring.Behaviours.Client;
+using AlephVault.Unity.Meetgard.Types;
+using Protocols.Messages;
+
+namespace Client.Authoring.Behaviours.UI
+{
+    using Protocols;
+    using UnityEngine.UI;
+
+    [RequireComponent(typeof(Image))]
+    public class ExampleMySimpleAuthUI : MonoBehaviour
+    {
+        /// <summary>
+        ///   The involved network client.
+        /// </summary>
+        [SerializeField]
+        private NetworkClient client;
+        
+        /// <summary>
+        ///   The address to connect to.
+        /// </summary>
+        [SerializeField]
+        private string address = "localhost";
+
+        /// <summary>
+        ///   The port to connect to.
+        /// </summary>
+        [SerializeField]
+        private ushort port = 6777;
+
+        /// <summary>
+        ///   The username field.
+        /// </summary>
+        [SerializeField]
+        private InputField username;
+
+        /// <summary>
+        ///   The password field.
+        /// </summary>
+        [SerializeField]
+        private InputField password;
+        
+        /// <summary>
+        ///   A status label.
+        /// </summary>
+        [SerializeField]
+        private Text statusLabel;
+        
+        /// <summary>
+        ///   The submit button.
+        /// </summary>
+        [SerializeField]
+        private Button submit;
+        
+        /// <summary>
+        ///   The UI to show when online.
+        /// </summary>
+        [SerializeField]
+        private GameObject onlineUI;
+        
+        /// <summary>
+        ///   The UI to show when offline.
+        /// </summary>
+        [SerializeField]
+        private GameObject offlineUI;
+        
+        // The client's register protocol.
+        private ExampleMySimpleAuthProtocolClientSide protocol;
+                 
+        private void Awake()
+        {
+            if (!client)
+            {
+                throw new Exception("No network client is referenced in this object!");
+            }
+            protocol = client.GetComponent<ExampleMySimpleAuthProtocolClientSide>();
+            if (!protocol)
+            {
+                throw new Exception("The network protocol does not have a behaviour of instance " +
+                                    "ExampleMySimpleAuthProtocolClientSide attached to it");
+            }
+            
+            if (!username || !password)
+            {
+                throw new Exception("The register form fields are not properly initialized!");
+            }
+            
+            if (!submit)
+            {
+                throw new Exception("The submit button is not properly initialized!");
+            }
+        }
+        
+        private Task UseCanvas(bool online)
+        {
+            return protocol.RunInMainThread(() => {
+                onlineUI.SetActive(online);
+                offlineUI.SetActive(!online);
+            });
+        }
+        
+        private void Start()
+        {
+            submit.onClick.AddListener(OnSubmitClick);
+            client.OnConnected += OnClientConnected;
+            client.OnDisconnected += OnClientDisconnected;            
+            protocol.OnLoginOK += OnLoginOK;
+            protocol.OnLoginFailed += OnLoginFailed;
+        }
+        
+        private void OnDestroy()
+        {
+            submit.onClick.RemoveListener(OnSubmitClick);
+            client.OnConnected -= OnClientConnected;
+            client.OnDisconnected -= OnClientDisconnected;            
+            protocol.OnLoginOK -= OnLoginOK;
+            protocol.OnLoginFailed -= OnLoginFailed;
+        }
+        
+        private void OnClientConnected()
+        {
+            submit.interactable = false;
+        }
+        
+        private void OnClientDisconnected()
+        {
+            protocol.Handshake.OnWelcome -= OnWelcome;
+            protocol.Handshake.OnTimeout -= OnTimeout;
+            submit.interactable = true;
+            UseCanvas(false);
+        }
+        
+        private async Task OnLoginOK(Nothing _)
+        {
+            // Please note: The argument type must match the Auth protocol definition!
+            SetStatus("Login was successful!");
+            await UseCanvas(true);
+        }
+        
+        private async Task OnLoginFailed(ExampleLoginFailed reason)
+        {
+            // Please note: The argument type must match the Auth protocol definition!
+            SetStatus(reason.Reason);
+        }
+        
+        private void OnSubmitClick()
+        {
+            submit.interactable = false;
+            try
+            {
+                SetStatus("Connecting...");
+                protocol.Handshake.OnWelcome += OnWelcome;
+                protocol.Handshake.OnTimeout += OnTimeout;
+                client.Connect(address, port);
+            }
+            catch(System.Exception)
+            {
+                SetStatus("Connection error!");
+                protocol.Handshake.OnWelcome -= OnWelcome;
+                protocol.Handshake.OnTimeout -= OnTimeout;
+                submit.interactable = true;
+            }
+        }
+        
+        private async Task OnWelcome()
+        {
+            SetStatus("Logging in...");
+            protocol.Handshake.OnWelcome -= OnWelcome;
+            await protocol.DefaultLoginSender(new ExampleLogin() {
+                Username = username.text,
+                Password = password.text
+            });
+        }
+        
+        private async Task OnTimeout()
+        {
+            SetStatus("Handshake timeout!");            
+        }
+        
+        private void SetStatus(string value)
+        {
+            if (statusLabel) {
+                protocol.RunInMainThread(() => {
+                    statusLabel.text = value;
+                });
+            }
+        }
+    }
+}
+```
+
+This is **not** a protocol behaviour but a regular Canvas object which connects to a `NetworkClient` object that must be assigned by the user at design time.
+
+Notice how, aside of the host/port fields, there are other fields which are related to the `ExampleLogin` class:
+
+1. A `username` field, to read the username.
+2. A `password` field, to read the password.
+3. A submit button, to send the login attempt.
+4. A status label, telling the status of the login attempt and perhaps any error. Optional but highly recommended.
+5. An object to show when the connection is established, and an object to show when the connection is offline (typically, this one has the input elements 1, 2, 3 and 4).
+
+Once all those elements are set, this behaviour performs everything, hides everything, disables/enables everything, ... the user needs no further logic.
 
 ### Generating the Register related pieces
 
