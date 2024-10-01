@@ -614,3 +614,44 @@ namespace Server.Authoring.Behaviours.Protocols
 
 This one is the most complex class to understand:
 
+1. A mandatory method `protected override void SetLoginMessageHandlers()` must implement the login methods that are defined in the protocol definition.
+   1. Each login method must have a logic that invokes either `RejectLogin(response)` where `response` is of type `ExampleLoginFailed` (matching the third type parameter) or `AcceptLogin` which accepts a `Nothing` successful response (matching the second type parameter) and a `string` value (matching the fifth type parameter).
+   2. It has its own documentation and recommendations. Users must pay attention to it.
+2. A mandatory method `protected override async Task<ExampleAccountData> FindAccount(string id)` is used to retrieve the user information given its id. Notice how `string` and `ExampleAccountData` match the proper type parameters in the class. On failure, the method must return `default`.
+3. A mandatory method `protected override AccountAlreadyLoggedManagementMode IfAccountAlreadyLoggedIn()` telling what to do (described in the comments) when an account happens to simultaneously log in again.
+4. A mandatory method `protected override async Task OnSessionError(ulong clientId, SessionStage stage, System.Exception error)` telling what to do when a session life-cycle incurs in error. After this callback, the session will be closed.
+
+This class also has callbacks (to be used by the other protocols that require them) described there.
+
+1. The `connection` argument is of type `ulong`.
+2. The `fullAccountData` argument is of type `ExampleAccountData`.
+3. The `reason` in `OnSessionTerminating` is either `null` (for graceful connection) or an `ExampleKicked` object.
+4. These all match the proper type parameters.
+
+There are also a bunch of methods that are described there:
+
+1. `public async Task Kick(ulong connection, ExampleKicked reason)` kicks a user, closing its connection and sending the reason.
+2. `public bool SessionExists(string accountId)` tells whether a user (by its id, of `string` type in this class) is logged or not.
+3. `public object GetSessionData(ulong connection, string key)` retrieves a specific string key (always a string) from transient session data.
+4. `public bool TryGetSessionData(ulonh connection, string key, out object val)` is similar but without exception triggering.
+5. `public void SetSessionData(ulong connection, string key, object val)` is the complementary function.
+6. `public void RemoveSessionData(ulong connection, string key)` clears a key.
+7. `public void ClearSessionUserData(ulong connection[, bool everything = false])` clears the entire session data. If `everything` is `true` then also clear the system-related keys, not just user-defined keys.
+8. `public bool SessionContainsKey(ulong connection, string key)` tells whether this session has a value at that key.
+
+Here, keys are always string. There's no type parameter for that (it does not make sense).
+
+Finally, there's a public `LoginRequired` method. It takes a callback users would typically pass to `AddIncomingMessageHandler`, and returns a callback users would typically pass to `AddIncomingMessageHandler`.
+
+> The difference is that the generated callback fails (and sends a proper message to the client, which is attended by the callback `OnNotLoggedIn`).
+
+There are many versions of `LoginRequired` which may be used by different protocols. Take a look at that method in the code:
+
+1. `callback = loginProtocolComponent.LoginRequired(async (...) => {})` only checks if the user is logged in.
+2. `callback = loginProtocolComponent.LoginRequired(async (ulong connection) => { /* return true if the connection is allowed for this command, or false if not */ }, async (...) => {})` also checks if the connection is allowed to execute this command. If the check callback returns false, the user is not allowed and the client will have the `OnForbidden` callback triggered.
+
+####
+
+### Generating the Register related pieces
+
+This one is simpler and involves less code being generated and understood.
