@@ -114,7 +114,7 @@ This is enough to define a single alternative for login. In this case, again: th
 
 #### The message types
 
-They will be located at `Assets/Scripts/Protocols/{Class}.css` with the contents:
+They will be located at `Assets/Scripts/Protocols/Messages/{Class}.cs` with the contents:
 
 ##### The `ExampleLogin` message:
 
@@ -865,4 +865,530 @@ Once all those elements are set, this behaviour performs everything, hides every
 
 ### Generating the Register related pieces
 
-This one is simpler and involves less code being generated and understood.
+This one is simpler and involves less code being generated and understood. This involves a similar code generation and a new menu option:
+
+```
+Assets/Create/Aleph Vault/Meetgard.Auth/Boilerplates/Create Simple Register Protocol
+```
+
+Similarly, a window will open prompting for data with these fields:
+
+1. The base name, similar to the auth case, this time being by default `MySimpleRegister`. It will be the base name of the protocol (e.g. `MySimpleRegisterProtocolDefinition`, `MySimpleRegisterProtocolServerSize`, `MySimpleRegisterProtocolClientSide`).
+2. The name of a register message, sent by the client to the server, with the register payload. Also `CamelCase`, by default `Register`.
+3. The name of a "register failed" message, sent by the server to the client, with the failure details when a register attempt was not valid. Also `CamelCase`, by default `RegisterFailed`.
+
+In order to understand the inners of these protocols, let's follow an example with these default names:
+
+1. Base name with `ExampleMySimpleRegister`.
+2. Login name with `ExampleRegister`.
+3. LoginFailed name with `ExampleRegisterFailed`.
+
+The generated files will be detailed here and explained one by one but, first, it must be understood that the generated code involves a username/password registration. Users can later add more complex implementations, however.
+
+Also, the user must understand that the generated files _will be located at the Meetgard's by-convention paths_, so it's crucial to understand that convention from the Meetgard's documentation.
+
+#### The protocol definition
+
+It will be located at `Assets/Scripts/Protocols/ExampleMySimpleRegisterProtocolDefinition.cs` with the contents:
+
+```csharp
+using AlephVault.Unity.Meetgard.Auth.Protocols.Simple;
+
+namespace Protocols {
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+    using AlephVault.Unity.Meetgard.Types;
+
+    public class ExampleMySimpleRegisterProtocolDefinition : SimpleRegisterProtocolDefinition<Nothing, Messages.ExampleRegisterFailed>
+    {
+        // Please note: The Nothing type is used when no data is needed.
+        // This means that by default there is no need for any content
+        // in the successful register response.
+        //
+        // Typically, that is the case. If you need a custom type, feel
+        // free to use any of the concrete types in AlephVault.Unity.Binary
+        // or create your own type implementing ISerializable interface,
+        // pretty much as it occurs in the ExampleRegisterFailed class.
+
+        /// <summary>
+        ///   Defines the register messages.
+        /// </summary>
+        protected override void DefineRegisterMessages()
+        {
+            // Define many alternative register messages. Typically,
+            // only one will be needed, however.
+            DefineRegisterMessage<Messages.ExampleRegister>("Default");
+        }
+    }
+}
+```
+
+Similar to the Authentication protocol, this one offers a `DefineRegisterMessages` into which the users must call one or more `DefineRegisterMessage` with a name ("Default" is also given by default here) and a proper serializable type.
+
+> While more alternatives can be defined, typically only one is defined.
+
+The rejection message is of type `ExampleRegisterFailed` and proper default messages are already defined for this.
+
+The acceptance message is, in this implementation (it can be changed), the `Nothing` type. It means no data will be sent when everything is OK.
+
+#### The message types
+
+As with the Authentication protocol, some messages will be defined here at `Assets/Scripts/Protocols/Messages/{Class}.cs` with their contents:
+
+##### The `ExampleRegister` message:
+
+```csharp
+namespace Protocols.Messages
+{
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+
+    public class ExampleRegister : ISerializable
+    {
+        /**
+         * A typical approach to a register class is to use
+         * some sort of username and password authentication
+         * mechanism. As always, ensure the Meetgard server
+         * runs by enabling SSL, regardless on how you design
+         * this class.
+         *
+         * Most of the scalar types are supported for this
+         * serialization mechanism (which occurs by reference).
+         * Also, custom types (also implementing ISerializable)
+         * can be defined and nested here (typically as a
+         * readonly value) and invoke their .Serialize method
+         * as part of this class' .Serialize method.
+         */
+         
+        public string Username;
+        public string Password;
+        public string PasswordConfirm;
+        // Uncomment this one if your account uses a Display Name,
+        // as part of the account instead of a separate data type.
+        //
+        // public string DisplayName;
+
+        public void Serialize(Serializer serializer)
+        {
+            serializer.Serialize(ref Username);
+            serializer.Serialize(ref Password);
+            serializer.Serialize(ref PasswordConfirm);
+            // Uncomment this one if your account uses a Display Name,
+            // as part of the account instead of a separate data type.
+            //
+            // serializer.Serialize(ref DisplayName);
+        }
+    }
+}
+```
+
+This one is related to the default implementation: Only registering username and password, with also a password confirm. It is suggested that the user can add a `DisplayName` class for registering a public name.
+
+This implementation can entirely be customized, but again: it requires customizing the entire logic interacting with it.
+
+##### The `ExampleRegisterFailed` message:
+
+```csharp
+namespace Protocols.Messages
+{
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+
+    public class ExampleRegisterFailed : ISerializable
+    {
+        /**
+         * A typical approach to this class is to define
+         * the fields for a somewhat short message on why
+         * did the register attempt failed.
+         */
+         
+        public string Reason;
+
+        public void Serialize(Serializer serializer)
+        {
+            serializer.Serialize(ref Reason);
+        }
+        
+        public ExampleRegisterFailed WithPasswordMismatchError()
+        {
+            Reason = "Password and confirmation do not match";
+            return this;
+        }
+        
+        public ExampleRegisterFailed WithValidationError()
+        {
+            Reason = "Invalid username and/or password";
+            return this;
+        }
+        
+        public ExampleRegisterFailed WithUnknownError()
+        {
+            Reason = "An unknown error has occurred. Try again later";
+            return this;
+        }
+
+        public ExampleRegisterFailed WithNotImplementedReason()
+        {
+            Reason = "Register is not yet implemented";
+            return this;
+        }
+    }
+}
+```
+
+Notice how these methods are implemented: They're not part of a mandatory interface, but instead they're used in the default logic for registering a user/password account.
+
+Also, notice how validation is NOT implemented here. **Be careful implementing the validation since big response payloads might not fit in Meetgard's sent/received messages**.
+
+#### The protocol implementation: Client side
+
+This one is located at: `Assets/Scripts/Client/Authoring/Behaviours/Protocols/ExampleMySimpleRegisterProtocolClientSide.cs` and looks like this:
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using AlephVault.Unity.Meetgard.Auth.Protocols.Simple;
+using Protocols;
+using Protocols.Messages;
+
+namespace Client.Authoring.Behaviours.Protocols
+{
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+    using AlephVault.Unity.Meetgard.Types;
+
+    public class ExampleMySimpleRegisterProtocolClientSide : SimpleRegisterProtocolClientSide<ExampleMySimpleRegisterProtocolDefinition, Nothing, ExampleRegisterFailed>
+    {
+        // Please note: The Nothing type is used when no data is needed.
+        // This means that by default there is no need for any content
+        // in the successful register response. See the ExampleMySimpleRegisterProtocolDefinition
+        // type for more details.
+
+        // A default register sender.
+        public Func<ExampleRegister, Task> DefaultRegisterSender { get; private set; }
+
+        /// <summary>
+        ///   Makes the senders for the register messages.
+        /// </summary>
+        protected override void MakeRegisterRequestSenders()
+        {
+            // For each defined register message in the protocol definition,
+            // the sender must be created in this method. Since one register
+            // message was defined in the protocol definition, one sender
+            // is being created in this method.
+            DefaultRegisterSender = MakeRegisterRequestSender<ExampleRegister>("Default");
+        }
+        
+        /**
+         * This class has the following events that can be listened for. They are:
+         *
+         * - Handshake.OnWelcome = async () => { ... }; for when this client received
+         *   from the server the first message. This client should, as immediately as
+         *   possible, send the register message with some pre-fetched data.
+         *
+         * - Handshake.OnTimeout = async () => { ... }; for when this client received
+         *   from the server a timeout message. This client should know the server will
+         *   disconnect it immediately and also render a message, since the server did
+         *   not receive, in certain threshold time, a register message.
+         *
+         * - OnRegisterOK = async (ok) => { ... }; for when this client received a
+         *   message telling the register was successful. The client should expect
+         *   more messages from the server (e.g. account being set up and things
+         *   needing a render in the client side).
+         *
+         * - OnRegisterFailed = async (reason) => { ... }; for when this client
+         *   received a message telling the register attempt was unsuccessful.
+         *   This also implies that the client should consider this connection
+         *   to be terminated automatically.
+         */
+    }
+}
+```
+
+Notice how there's a public method: `DefaultRegisterSender(some ExampleRegister message)` which will attempt a register.
+
+Also, there are some callbacks properly documented, considering:
+
+1. The `ok` will be of `Nothing` type, matching the second type parameter.
+2. The `reason` will be of `ExampleRegisterFailed` type, matching the third type parameter.
+
+Pay attention to the callbacks and properly implement them for each received message.
+
+#### The protocol implementation: Server side
+
+This one is located at: `Assets/Scripts/Server/Authoring/Behaviours/Protocols/ExampleMySimpleRegisterProtocolServerSide.cs` and looks like this:
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using AlephVault.Unity.Meetgard.Auth.Protocols.Simple;
+using Protocols;
+using Protocols.Messages;
+
+namespace Server.Authoring.Behaviours.Protocols
+{
+    using AlephVault.Unity.Binary;
+    using AlephVault.Unity.Binary.Wrappers;
+    using AlephVault.Unity.Meetgard.Types;
+
+    public class ExampleMySimpleRegisterProtocolServerSide : SimpleRegisterProtocolServerSide<ExampleMySimpleRegisterProtocolDefinition, Nothing, ExampleRegisterFailed>
+    {
+        /// <summary>
+        ///   Makes the handlers for the register messages.
+        /// </summary>
+        protected override void SetRegisterMessageHandlers()
+        {
+            // For each defined register message in the protocol definition,
+            // the handler must be created in this method. Since one register
+            // message was defined in the protocol definition, one handler
+            // is being created in this method.
+            //
+            // Typically, the handler to add would be for non-logged users.
+            //
+            // If this component is attached to the same object that has an
+            // authentication protocol, you might want to wrap this handler
+            // using .LogoutRequired from that component.
+            AddRegisterMessageHandler<ExampleRegister>("Default", async (register) => {
+                // This method requires a totally custom implementation
+                // from the user.
+                //
+                // Given the login details, they are either valid or
+                // invalid. If the register is valid, then it must return:
+                // - A successful response. By default, the successful
+                //   response is defined of type Nothing, so the value
+                //   will be Nothing.Instance.
+                // 
+                // return AcceptRegister(successfulReason);
+                //
+                // Otherwise, for invalid register attempts, a rejection
+                // reason must be generated, of type: ExampleRegisterFailed.
+                //
+                // return RejectRegister(unsuccessfulReason);
+                
+                // WARNING: EVERY CALL TO AN EXTERNAL API OR USING A GAME OBJECT
+                //          OR BEHAVIOUR MUST BE DONE IN THE CONTEXT OF A CALL TO
+                //          RunInMainThread OR IT WILL SILENTLY FAIL.
+
+                if (register.Password != register.PasswordConfirm)
+                {
+                    return RejectRegister(new ExampleRegisterFailed().WithPasswordMismatchError());
+                }
+
+                return RejectRegister(new ExampleRegisterFailed().WithNotImplementedReason());
+            });
+        }
+    }
+}
+```
+
+The idea is analogous to the authentication protocol:
+
+1. Use `return AcceptRegister(Nothing value)` passing a `Nothing` instance (unless it's needed to use another `RegisterOK` type for the entire protocol, but by default it's `Nothing`) when the register is OK.
+2. Use `return RejectRegister(ExampleRegisterFailed reason)` passing a proper `ExampleRegisterFailed` instance when something went wrong. It's up to the user to tell the reasons and make them make sense in client side.
+
+#### Finally, the UI component
+
+A `UI` component is also generated: `ExampleMySimpleAuthUI`. It's located at: `Assets/Scripts/Client/Authoring/Behaviours/UI/ExampleMySimpleRegisterUI.cs`. It looks like this:
+
+```csharp
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.UI;
+using AlephVault.Unity.Meetgard.Authoring.Behaviours.Client;
+using AlephVault.Unity.Meetgard.Types;
+using Protocols.Messages;
+
+namespace Client.Authoring.Behaviours.UI
+{
+    using Protocols;
+    using UnityEngine.UI;
+
+    [RequireComponent(typeof(Image))]
+    public class ExampleMySimpleRegisterUI : MonoBehaviour
+    {
+        /// <summary>
+        ///   The involved network client.
+        /// </summary>
+        [SerializeField]
+        private NetworkClient client;
+        
+        /// <summary>
+        ///   The address to connect to.
+        /// </summary>
+        [SerializeField]
+        private string address = "localhost";
+
+        /// <summary>
+        ///   The port to connect to.
+        /// </summary>
+        [SerializeField]
+        private ushort port = 6777;
+
+        /// <summary>
+        ///   The username field.
+        /// </summary>
+        [SerializeField]
+        private InputField username;
+
+        /// <summary>
+        ///   The password field.
+        /// </summary>
+        [SerializeField]
+        private InputField password;
+
+        /// <summary>
+        ///   The password confirm field.
+        /// </summary>
+        [SerializeField]
+        private InputField passwordConfirm;
+        
+        /// <summary>
+        ///   A status label.
+        /// </summary>
+        [SerializeField]
+        private Text statusLabel;
+
+        /**
+         * Uncomment this field if the register involves some sort
+         * of display name for the registered accounts, instead of
+         * a separate concept / data type.
+         *
+         * /// <summary>
+         * ///   The display name field.
+         * /// </summary>
+         * [SerializeField]
+         * private InputField displayName;
+         */
+        
+        /// <summary>
+        ///   The submit button.
+        /// </summary>
+        [SerializeField]
+        private Button submit;
+        
+        // The client's register protocol.
+        private ExampleMySimpleRegisterProtocolClientSide protocol;
+                 
+        private void Awake()
+        {
+            if (!client)
+            {
+                throw new Exception("No network client is referenced in this object!");
+            }
+            protocol = client.GetComponent<ExampleMySimpleRegisterProtocolClientSide>();
+            if (!protocol)
+            {
+                throw new Exception("The network protocol does not have a behaviour of instance " +
+                                    "ExampleMySimpleRegisterProtocolClientSide attached to it");
+            }
+            
+            // Remove the comment on the displayName variable if it is used by this form.
+            if (!username || !password || !passwordConfirm /* || displayName */)
+            {
+                throw new Exception("The register form fields are not properly initialized!");
+            }
+            
+            if (!submit)
+            {
+                throw new Exception("The submit button is not properly initialized!");
+            }
+        }
+        
+        private void Start()
+        {
+            submit.onClick.AddListener(OnSubmitClick);
+            client.OnConnected += OnClientConnected;
+            client.OnDisconnected += OnClientDisconnected;            
+            protocol.OnRegisterOK += OnRegisterOK;
+            protocol.OnRegisterFailed += OnRegisterFailed;
+        }
+        
+        private void OnDestroy()
+        {
+            submit.onClick.RemoveListener(OnSubmitClick);
+            client.OnConnected -= OnClientConnected;
+            client.OnDisconnected -= OnClientDisconnected;            
+            protocol.OnRegisterOK -= OnRegisterOK;
+            protocol.OnRegisterFailed -= OnRegisterFailed;
+        }
+        
+        private void OnClientConnected()
+        {
+            submit.interactable = false;
+        }
+        
+        private void OnClientDisconnected()
+        {
+            protocol.Handshake.OnWelcome -= OnWelcome;
+            protocol.Handshake.OnTimeout -= OnTimeout;
+            submit.interactable = true;
+        }
+        
+        private async Task OnRegisterOK(Nothing _)
+        {
+            // Please note: The argument type must match the Register protocol definition!
+            SetStatus("Register was successful!");
+        }
+        
+        private async Task OnRegisterFailed(ExampleRegisterFailed reason)
+        {
+            // Please note: The argument type must match the Register protocol definition!
+            SetStatus(reason.Reason);
+        }
+        
+        private void OnSubmitClick()
+        {
+            submit.interactable = false;
+            try
+            {
+                SetStatus("Connecting...");
+                protocol.Handshake.OnWelcome += OnWelcome;
+                protocol.Handshake.OnTimeout += OnTimeout;
+                client.Connect(address, port);
+            }
+            catch(System.Exception)
+            {
+                SetStatus("Connection error!");
+                protocol.Handshake.OnWelcome -= OnWelcome;
+                protocol.Handshake.OnTimeout -= OnTimeout;
+                submit.interactable = true;
+            }
+        }
+        
+        private async Task OnWelcome()
+        {
+            SetStatus("Registering...");
+            protocol.Handshake.OnWelcome -= OnWelcome;
+            await protocol.DefaultRegisterSender(new ExampleRegister() {
+                Username = username.text,
+                Password = password.text,
+                PasswordConfirm = passwordConfirm.text,
+                // Uncomment the following line if your register makes use of DisplayName.
+                /* DisplayName = displayName.text */
+            });
+        }
+        
+        private async Task OnTimeout()
+        {
+            SetStatus("Handshake timeout!");            
+        }
+        
+        private void SetStatus(string value)
+        {
+            if (statusLabel) {
+                protocol.RunInMainThread(() => {
+                    statusLabel.text = value;
+                });
+            }
+        }
+    }
+}
+```
+
+The idea is very similar to the Authentication UI, but there's no on-line/offline components switching, and there's also a `passwordConfirm` to set.
+
+Similar to the Authenticator UI, this provides a full implementation for the username/password/passwordConfirm registering method.
+
+# Final remarks
+
+Again, take into account that these implementations can be completely changed once generated, as long as they're changed consistently, that more authentication / register methods can be added, and that, aside from what's described in this document, no more details are needed for the end user.
