@@ -90,7 +90,7 @@ namespace Client.Authoring.Behaviours.UI
             }
             
             // Remove the comment on the displayName variable if it is used by this form.
-            if (!username || !password || !passwordConfirm /* || displayName */)
+            if (!username || !password || !passwordConfirm /* || !displayName */)
             {
                 throw new Exception("The register form fields are not properly initialized!");
             }
