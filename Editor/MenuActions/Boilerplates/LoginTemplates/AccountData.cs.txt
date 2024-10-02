@@ -27,8 +27,8 @@ namespace Server.Authoring.Types
 
         public #ACCOUNTPREVIEWDATA_TYPE# GetProfileDisplayData()
         {
-            // This method can be changed (actually, it must depending
-            // on the changes applied to #ACCOUNTPREVIEWDATA_TYPE#.
+            // This method can be changed (actually, it must depend  
+            // on the changes applied to #ACCOUNTPREVIEWDATA_TYPE#).
             return new #ACCOUNTPREVIEWDATA_TYPE#() { Username = Username };
         }
     }
