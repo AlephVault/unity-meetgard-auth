@@ -463,6 +463,11 @@ The generated code is self-documented on when each callback is triggered.
 
 Also, there's a `Logout()` method. It sends a disconnection message and then, after it was sent, closes the connection on the client side.
 
+Finally, the `MakeLoginRequiredSender` can be invoked for both typed and void senders (those functions created with `MakeSender` and `MakeSender<T>`):
+
+1. `sender = loginProtocolComponent.MakeLoginRequiredSender(sender);` wraps it with a function that, when invoked, it will only send the command if it's already logged in. If not logged in, it will directly trigger the `OnNotLoggedIn` event.
+2. `sender = loginProtocolComponent.MakeLoginRequiredSender(sender, true);` wraps it with a function that, when invoked, it will only send the command if it's already logged in. If not logged in, it will raise the `ExampleMySimpleAuthProtocolClientSide.NotLoggedInException` exception.
+
 #### The protocol implementation: Server side
 
 This one is located at: `Assets/Scripts/Server/Authoring/Behaviours/Protocols/ExampleMySimpleAuthProtocolServerSide.cs` and looks like this:
