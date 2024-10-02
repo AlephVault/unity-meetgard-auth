@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Client;
 using AlephVault.Unity.Meetgard.Types;
 using Protocols.Messages;
+#USING_TMPRO_COMMENT#using TMPro;
 
 namespace Client.Authoring.Behaviours.UI
 {
@@ -35,19 +36,19 @@ namespace Client.Authoring.Behaviours.UI
         ///   The username field.
         /// </summary>
         [SerializeField]
-        private InputField username;
+        private #TMPRO_PREFIX#InputField username;
 
         /// <summary>
         ///   The password field.
         /// </summary>
         [SerializeField]
-        private InputField password;
+        private #TMPRO_PREFIX#InputField password;
         
         /// <summary>
         ///   A status label.
         /// </summary>
         [SerializeField]
-        private Text statusLabel;
+        private #TMPRO_PREFIX#Text statusLabel;
         
         /// <summary>
         ///   The submit button.

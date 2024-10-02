@@ -49,6 +49,9 @@ namespace AlephVault.Unity.Meetgard
                     // as the Login, LoginFailed and Kicked types).
                     private string accountPreviewDataType = "AccountPreviewData";
 
+                    // If true, tells to generate the UI code using TMPro.
+                    private bool useTMProInUI = false;
+
                     protected override float GetSmartWidth()
                     {
                         return 730;
@@ -131,7 +134,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         
                         // The AccountPreviewData message type
                         EditorGUILayout.BeginHorizontal();
-                        accountPreviewDataType = EditorGUILayout.TextField("AccountPreviewDAta type", accountPreviewDataType).Trim();
+                        accountPreviewDataType = EditorGUILayout.TextField("AccountPreviewData type", accountPreviewDataType).Trim();
                         bool validAccountPreviewDataType = nameCriterion.IsMatch(accountPreviewDataType);
                         if (!validAccountPreviewDataType)
                         {
@@ -141,12 +144,20 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         
                         // The AccountData type
                         EditorGUILayout.BeginHorizontal();
-                        accountDataType = EditorGUILayout.TextField("AccountPreviewData type", accountDataType).Trim();
+                        accountDataType = EditorGUILayout.TextField("AccountData type", accountDataType).Trim();
                         bool validAccountDataType = nameCriterion.IsMatch(accountDataType);
                         if (!validAccountDataType)
                         {
                             EditorGUILayout.LabelField("The AccountData type name is invalid!");
                         }
+                        EditorGUILayout.EndHorizontal();
+                        
+                        // A flag telling to use, in the UI, the TMPro package.
+                        EditorGUILayout.BeginHorizontal();
+                        useTMProInUI = EditorGUILayout.ToggleLeft(
+                            "Use TMPro classes in the generated UI component",
+                            useTMProInUI
+                        );
                         EditorGUILayout.EndHorizontal();
                         
                         if (validBaseName && validLoginType && validLoginFailedType &&
@@ -158,7 +169,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     {
                         DumpProtocolTemplates(
                             baseName, loginType, loginFailedType, kickedType, accountIdType,
-                            accountPreviewDataType, accountDataType
+                            accountPreviewDataType, accountDataType, useTMProInUI
                         );
                     }
                 }
@@ -166,7 +177,8 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                 // Performs the full dump of the code.
                 private static void DumpProtocolTemplates(
                     string basename, string loginType, string loginFailedType, string kickedType,
-                    string accountIdType, string accountPreviewDataType, string accountDataType
+                    string accountIdType, string accountPreviewDataType, string accountDataType,
+                    bool usingTMPro
                 ) {
                     string directory = "Packages/com.alephvault.unity.meetgard.auth/" +
                                        "Editor/MenuActions/Boilerplates/LoginTemplates";
@@ -212,6 +224,8 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         {"ACCOUNTID_TYPE", accountIdType},
                         {"ACCOUNTPREVIEWDATA_TYPE", accountPreviewDataType},
                         {"ACCOUNTDATA_TYPE", accountDataType},
+                        {"USING_TMPRO_COMMENT", usingTMPro ? "" : "// "},
+                        {"TMPRO_PREFIX", usingTMPro ? "TMP_" : ""}
                     };
 
                     new Boilerplate()
