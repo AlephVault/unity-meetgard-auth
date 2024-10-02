@@ -34,6 +34,9 @@ namespace AlephVault.Unity.Meetgard
                     // The name of the RegisterFailed message type.
                     private string registerFailedType = "RegisterFailed";
                     
+                    // If true, tells to generate the UI code using TMPro.
+                    private bool useTMProInUI = false;
+
                     protected override float GetSmartWidth()
                     {
                         return 730;
@@ -90,6 +93,14 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         }
                         EditorGUILayout.EndHorizontal();
                         
+                        // A flag telling to use, in the UI, the TMPro package.
+                        EditorGUILayout.BeginHorizontal();
+                        useTMProInUI = EditorGUILayout.ToggleLeft(
+                            "Use TMPro classes in the generated UI component",
+                            useTMProInUI
+                        );
+                        EditorGUILayout.EndHorizontal();
+
                         if (validBaseName && validRegisterType && validRegisterFailedType)
                             SmartButton("Generate", Execute);
                     }
@@ -97,14 +108,14 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     private void Execute()
                     {
                         DumpProtocolTemplates(
-                            baseName, registerType, registerFailedType
+                            baseName, registerType, registerFailedType, useTMProInUI
                         );
                     }
                 }
 
                 // Performs the full dump of the code.
                 private static void DumpProtocolTemplates(
-                    string basename, string registerType, string registerFailedType
+                    string basename, string registerType, string registerFailedType, bool usingTMPro
                 ) {
                     string directory = "Packages/com.alephvault.unity.meetgard.auth/" +
                                        "Editor/MenuActions/Boilerplates/RegisterTemplates";
@@ -137,6 +148,8 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         {"PROTOCOLDEFINITION", basename + "ProtocolDefinition"},
                         {"REGISTER_TYPE", registerType},
                         {"REGISTERFAILED_TYPE", registerFailedType},
+                        {"USING_TMPRO_COMMENT", usingTMPro ? "" : "// "},
+                        {"TMPRO_PREFIX", usingTMPro ? "TMP_" : ""}
                     };
 
                     new Boilerplate()
