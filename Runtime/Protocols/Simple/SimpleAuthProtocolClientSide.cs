@@ -2,8 +2,6 @@ using AlephVault.Unity.Binary;
 using AlephVault.Unity.Meetgard.Auth.Types;
 using AlephVault.Unity.Meetgard.Authoring.Behaviours.Client;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AlephVault.Unity.Support.Utils;
 using UnityEngine;
@@ -33,6 +31,15 @@ namespace AlephVault.Unity.Meetgard.Auth
                 where Kicked : IKickMessage<Kicked>, new()
                 where Definition : SimpleAuthProtocolDefinition<LoginOK, LoginFailed, Kicked>, new()
             {
+                /// <summary>
+                ///   Exception being thrown when a sender with throwOnNotLoggedIn=true was invoked
+                ///   while it was not logged in.
+                /// </summary>
+                public class NotLoggedInException : Exception
+                {
+                    public NotLoggedInException(string message) : base(message) { }
+                }
+                
                 // This is a sender for the Logout message.
                 private Func<Task> SendLogout;
 
@@ -141,6 +148,63 @@ namespace AlephVault.Unity.Meetgard.Auth
                 protected Func<T, Task> MakeLoginRequestSender<T>(string method) where T : ISerializable, new()
                 {
                     return MakeSender<T>("Login:" + method);
+                }
+
+                /// <summary>
+                ///   Creates a sender which is login-aware by wrapping another sender.
+                ///   The wrapped sender will not be called if the protocol is logged
+                ///   out (or never logged in in first place). Either an exception can
+                ///   be thrown or the <see cref="OnNotLoggedIn" /> event can be triggered.
+                /// </summary>
+                /// <param name="sender">The sender to wrap</param>
+                /// <param name="throwOnNotLoggedIn">Whether to also trigger an error if the client is not logged in</param>
+                /// <typeparam name="T">The message type</typeparam>
+                /// <returns>A wrapped sender</returns>
+                public Func<T, Task> MakeLoginRequiredSender<T>(Func<T, Task> sender, bool throwOnNotLoggedIn = false) where T : ISerializable, new()
+                {
+                    return async (m) =>
+                    {
+                        if (LoggedIn)
+                        {
+                            await sender(m);
+                        }
+                        else if (throwOnNotLoggedIn)
+                        {
+                            throw new NotLoggedInException("This client is not logged in");
+                        }
+                        else
+                        {
+                            await (OnNotLoggedIn?.Invoke() ?? Task.CompletedTask);
+                        }
+                    };
+                }
+
+                /// <summary>
+                ///   Creates a sender which is login-aware by wrapping another sender.
+                ///   The wrapped sender will not be called if the protocol is logged
+                ///   out (or never logged in in first place). Either an exception can
+                ///   be thrown or the <see cref="OnNotLoggedIn" /> event can be triggered.
+                /// </summary>
+                /// <param name="sender">The sender to wrap</param>
+                /// <param name="throwOnNotLoggedIn">Whether to also trigger an error if the client is not logged in</param>
+                /// <returns>A wrapped sender</returns>
+                public Func<Task> MakeLoginRequiredSender(Func<Task> sender, bool throwOnNotLoggedIn = false)
+                {
+                    return async () =>
+                    {
+                        if (LoggedIn)
+                        {
+                            await sender();
+                        }
+                        else if (throwOnNotLoggedIn)
+                        {
+                            throw new NotLoggedInException("This client is not logged in");
+                        }
+                        else
+                        {
+                            await (OnNotLoggedIn?.Invoke() ?? Task.CompletedTask);
+                        }
+                    };
                 }
                 
                 /// <summary>

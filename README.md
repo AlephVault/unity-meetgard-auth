@@ -437,6 +437,14 @@ namespace Client.Authoring.Behaviours.Protocols
          * Additionally, there is a Logout() method to send a logout to the server.
          *
          * At any moment, it may be invoked as _ = Logout() or await Logout(). 
+         *
+         * Finally, given a typed or void sender, a wrapped version of that sender
+         * can be created by invoking `MakeLoginRequiredSender`. This wrapper function
+         * creates a new sender which does not send the actual command if the client
+         * is not logged in. In such cases, it triggers the OnNotLoggedIn command by
+         * itself (with no server interaction). If a second argument is given as `true`
+         * then instead of triggering the OnNotLoggedIn event an exception of type
+         * `ExampleMySimpleAuthProtocolClientSide.NotLoggedInException` will be thrown.
          */
     }
 }
@@ -609,6 +617,9 @@ namespace Server.Authoring.Behaviours.Protocols
          *   A new handler is returned, which typically becomes the value for a call to
          *   AddIncomingMessageHandler in another protocol.
          *   - This method has TWO versions: one for untyped handlers, and one for typed ones.
+         * - handler = LogoutRequired(handler)
+         *   Checks whether the connection is logged out and allowed to perform the action.
+         *   This is the exact inverse of LoginRequired.
          */
     }
 }
