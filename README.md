@@ -51,6 +51,7 @@ Once clicked, a Window will open, prompting the users to fill the following fiel
 5. The name of the "Account ID Type". This is the name of a class / type used for the ID of the underlying account model, if any. **this type must already exist - it will not be generated and does not need to be ISerializable**.
 6. The name of the "Account Preview Data type". This is, again, a `PascalCase` name and by default will be `AccountPreviewData`. This class will be generated as an `ISerializable` class, like `Login`, `LoginFailed` and `Kicked`. This preview data will be sent to the client.
 7. The name of the "Account Data type". This is, again, a `PascalCase` name and by default will be `AccountData`. This class will be generated (**not** as an `ISerializable` type since this one will not be transmitted to the client).
+8. Also, picking whether the generated UI class will make use of `TMP_` components (e.g. `TMP_Text` and `TMP_InputField`) or not (i.e. keep the regular ones).
 
 In order to understand the inners of these protocols, let's follow an example with these default names:
 
@@ -61,6 +62,7 @@ In order to understand the inners of these protocols, let's follow an example wi
 5. Account ID type with `string`.
 6. Account Preview Data type: `ExampleAccountPreviewData`.
 7. Account Data type: `ExampleAccountData`.
+8. In this case, we'll use regular (non-TMP_) components.
 
 The generated files will be detailed here and explained one by one but, first, it must be understood that the generated code involves a username/password login. Users can later add more complex implementations, however.
 
@@ -898,12 +900,14 @@ Similarly, a window will open prompting for data with these fields:
 1. The base name, similar to the auth case, this time being by default `MySimpleRegister`. It will be the base name of the protocol (e.g. `MySimpleRegisterProtocolDefinition`, `MySimpleRegisterProtocolServerSize`, `MySimpleRegisterProtocolClientSide`).
 2. The name of a register message, sent by the client to the server, with the register payload. Also `CamelCase`, by default `Register`.
 3. The name of a "register failed" message, sent by the server to the client, with the failure details when a register attempt was not valid. Also `CamelCase`, by default `RegisterFailed`.
+4. Also, picking whether the generated UI class will make use of `TMP_` components (e.g. `TMP_Text` and `TMP_InputField`) or not (i.e. keep the regular ones).
 
 In order to understand the inners of these protocols, let's follow an example with these default names:
 
 1. Base name with `ExampleMySimpleRegister`.
 2. Login name with `ExampleRegister`.
 3. LoginFailed name with `ExampleRegisterFailed`.
+4. We'll also here not select the `TMP_` components.
 
 The generated files will be detailed here and explained one by one but, first, it must be understood that the generated code involves a username/password registration. Users can later add more complex implementations, however.
 
