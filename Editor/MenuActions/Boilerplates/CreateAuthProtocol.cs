@@ -49,9 +49,13 @@ namespace AlephVault.Unity.Meetgard
                     // as the Login, LoginFailed and Kicked types).
                     private string accountPreviewDataType = "AccountPreviewData";
 
-                    // If true, tells to generate the UI code using TMPro.
-                    private bool useTMProInUI = false;
+                    // If true, this component will treat the current game
+                    // object as the "offlineUI".
+                    private bool useSelfOfflineUI;
 
+                    // If true, tells to generate the UI code using TMPro.
+                    private bool useTMProInUI;
+                    
                     protected override float GetSmartWidth()
                     {
                         return 730;
@@ -152,7 +156,15 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         }
                         EditorGUILayout.EndHorizontal();
                         
-                        // A flag telling to use, in the UI, the TMPro package.
+                        // A flag telling to use the same component as the "offlineUI" interface.
+                        EditorGUILayout.BeginHorizontal();
+                        useSelfOfflineUI = EditorGUILayout.ToggleLeft(
+                            "Mode: Component's game object will serve as offline UI",
+                            useSelfOfflineUI
+                        );
+                        EditorGUILayout.EndHorizontal();
+                        
+                        // A flag telling to use, in the UI, the TMPro package
                         EditorGUILayout.BeginHorizontal();
                         useTMProInUI = EditorGUILayout.ToggleLeft(
                             "Use TMPro classes in the generated UI component",
@@ -169,7 +181,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                     {
                         DumpProtocolTemplates(
                             baseName, loginType, loginFailedType, kickedType, accountIdType,
-                            accountPreviewDataType, accountDataType, useTMProInUI
+                            accountPreviewDataType, accountDataType, useTMProInUI, useSelfOfflineUI
                         );
                     }
                 }
@@ -178,7 +190,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                 private static void DumpProtocolTemplates(
                     string basename, string loginType, string loginFailedType, string kickedType,
                     string accountIdType, string accountPreviewDataType, string accountDataType,
-                    bool usingTMPro
+                    bool usingTMPro, bool useSelfOfflineUI
                 ) {
                     string directory = "Packages/com.alephvault.unity.meetgard.auth/" +
                                        "Editor/MenuActions/Boilerplates/LoginTemplates";
@@ -194,7 +206,7 @@ WARNING: THIS MIGHT OVERRIDE EXISTING CODE. Always use proper source code manage
                         directory + "/SimpleAuthProtocolDefinition.cs.txt"
                     );
                     TextAsset uiText = AssetDatabase.LoadAssetAtPath<TextAsset>(
-                        directory + "/SimpleAuthUI.cs.txt"
+                        directory + (useSelfOfflineUI ? "/SimpleAuthUI-self.cs.txt" : "/SimpleAuthUI.cs.txt")
                     );
 
                     // The datatype templates.

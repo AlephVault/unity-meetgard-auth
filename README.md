@@ -51,7 +51,8 @@ Once clicked, a Window will open, prompting the users to fill the following fiel
 5. The name of the "Account ID Type". This is the name of a class / type used for the ID of the underlying account model, if any. **this type must already exist - it will not be generated and does not need to be ISerializable**.
 6. The name of the "Account Preview Data type". This is, again, a `PascalCase` name and by default will be `AccountPreviewData`. This class will be generated as an `ISerializable` class, like `Login`, `LoginFailed` and `Kicked`. This preview data will be sent to the client.
 7. The name of the "Account Data type". This is, again, a `PascalCase` name and by default will be `AccountData`. This class will be generated (**not** as an `ISerializable` type since this one will not be transmitted to the client).
-8. Also, picking whether the generated UI class will make use of `TMP_` components (e.g. `TMP_Text` and `TMP_InputField`) or not (i.e. keep the regular ones).
+8. Whether to generate a component that uses the same game object as the thing to show when the client is not logged in, or one that requires another game object to be shown in that case.
+9. Also, picking whether the generated UI class will make use of `TMP_` components (e.g. `TMP_Text` and `TMP_InputField`) or not (i.e. keep the regular ones).
 
 In order to understand the inners of these protocols, let's follow an example with these default names:
 
@@ -62,7 +63,8 @@ In order to understand the inners of these protocols, let's follow an example wi
 5. Account ID type with `string`.
 6. Account Preview Data type: `ExampleAccountPreviewData`.
 7. Account Data type: `ExampleAccountData`.
-8. In this case, we'll use regular (non-TMP_) components.
+8. We'll set this flag (`Mode: Component's game object will serve as offline UI`) to false.
+9. In this case, we'll use regular (non-TMP_) components.
 
 The generated files will be detailed here and explained one by one but, first, it must be understood that the generated code involves a username/password login. Users can later add more complex implementations, however.
 
