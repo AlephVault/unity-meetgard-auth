@@ -797,15 +797,21 @@ namespace Client.Authoring.Behaviours.UI
         
         private void OnClientConnected()
         {
-            submit.interactable = false;
+            protocol.RunInMainThread(() =>
+            {
+                submit.interactable = false;
+            });
         }
         
         private void OnClientDisconnected()
         {
-            protocol.Handshake.OnWelcome -= OnWelcome;
-            protocol.Handshake.OnTimeout -= OnTimeout;
-            submit.interactable = true;
-            UseCanvas(false);
+            protocol.RunInMainThread(() =>
+            {
+                protocol.Handshake.OnWelcome -= OnWelcome;
+                protocol.Handshake.OnTimeout -= OnTimeout;
+                submit.interactable = true;
+                UseCanvas(false);
+            });
         }
         
         private async Task OnLoginOK(Nothing _)
@@ -1330,14 +1336,20 @@ namespace Client.Authoring.Behaviours.UI
         
         private void OnClientConnected()
         {
-            submit.interactable = false;
+            protocol.RunInMainThread(() =>
+            {
+                submit.interactable = false;
+            });
         }
         
         private void OnClientDisconnected()
         {
-            protocol.Handshake.OnWelcome -= OnWelcome;
-            protocol.Handshake.OnTimeout -= OnTimeout;
-            submit.interactable = true;
+            protocol.RunInMainThread(() =>
+            {
+               protocol.Handshake.OnWelcome -= OnWelcome;
+               protocol.Handshake.OnTimeout -= OnTimeout;
+               submit.interactable = true;
+            });
         }
         
         private async Task OnRegisterOK(Nothing _)
