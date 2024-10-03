@@ -195,5 +195,10 @@ namespace Client.Authoring.Behaviours.UI
                 });
             }
         }
+        
+        private void OnEnable()  
+        {  
+            SetStatus("Press \"Register\" to continue...");  
+        }
     }
 }
